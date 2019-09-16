@@ -41,24 +41,6 @@ frappe.ui.form.on("Contact", {
 			}
 		});
 		frm.refresh_field("links");
-
-		if (frm.doc.links.length > 0) {
-			frappe.call({
-				method: "frappe.contacts.doctype.contact.contact.address_query",
-				args: {links: frm.doc.links},
-				callback: function(r) {
-					if (r && r.message) {
-						frm.set_query("address", function () {
-							return {
-								filters: {
-									name: ["in", r.message],
-								}
-							}
-						});
-					}
-				}
-			});
-		}
 	},
 	validate: function(frm) {
 		// clear linked customer / supplier / sales partner on saving...
@@ -87,6 +69,25 @@ frappe.ui.form.on("Contact", {
 					frm.set_value("google_contacts", r.name);
 				}
 			})
+		}
+	},
+	address: function(frm) {
+		if (frm.doc.links.length > 0) {
+			frappe.call({
+				method: "frappe.contacts.doctype.contact.contact.address_query",
+				args: {links: frm.doc.links},
+				callback: function(r) {
+					if (r && r.message) {
+						frm.set_query("address", function () {
+							return {
+								filters: {
+									name: ["in", r.message],
+								}
+							}
+						});
+					}
+				}
+			});
 		}
 	}
 });
