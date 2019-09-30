@@ -98,6 +98,11 @@ class User(Document):
 		if self.name not in ('Administrator', 'Guest') and not self.user_image:
 			frappe.enqueue('frappe.core.doctype.user.user.update_gravatar', name=self.name)
 
+	def after_insert(self):
+		from frappe.chat.doctype.chat_profile.chat_profile import create_chat_profile
+
+		create_chat_profile(self.name)
+
 	def has_website_permission(self, ptype, user, verbose=False):
 		"""Returns true if current user is the session user"""
 		return self.name == frappe.session.user

@@ -1,85 +1,22 @@
 // Frappe Chat
 // Author - Achilles Rasquinha <achilles@frappe.io>
 
-import Fuse   from 'fuse.js'
-import hyper  from '../lib/hyper.min'
+import Fuse from 'fuse.js'
+import hyper from '../lib/hyper.min'
 
 import './socketio_client'
-
 import './ui/dialog'
 import './ui/capture'
-
 import './utils/user'
 
 /* eslint semi: "never" */
-// Fuck semicolons - https://mislav.net/2010/05/semicolons
 
 // frappe extensions
 
-/**
- * @description The base class for all Frappe Errors.
- *
- * @example
- * try
- *      throw new frappe.Error("foobar")
- * catch (e)
- *      console.log(e.name)
- * // returns "FrappeError"
- *
- * @see  https://stackoverflow.com/a/32749533
- * @todo Requires "transform-builtin-extend" for Babel 6
- */
-frappe.Error = Error
-// class extends Error {
-// 	constructor (message) {
-// 		super (message)
-
-// 		this.name = 'FrappeError'
-
-// 		if ( typeof Error.captureStackTrace === 'function' )
-// 			Error.captureStackTrace(this, this.constructor)
-// 		else
-// 			this.stack = (new Error(message)).stack
-// 	}
-// }
-
-/**
- * @description TypeError
- */
-frappe.TypeError  = TypeError
-// class extends frappe.Error {
-// 	constructor (message) {
-// 		super (message)
-
-// 		this.name = this.constructor.name
-// 	}
-// }
-
-/**
- * @description ValueError
- */
-frappe.ValueError = Error
-// class extends frappe.Error {
-// 	constructor (message) {
-// 		super (message)
-
-// 		this.name = this.constructor.name
-// 	}
-// }
-
-/**
- * @description ImportError
- */
-frappe.ImportError = Error
-// class extends frappe.Error {
-// 	constructor (message) {
-// 		super (message)
-
-// 		this.name  = this.constructor.name
-// 	}
-// }
-
-// frappe.datetime
+frappe.Error = Error;
+frappe.TypeError  = TypeError;
+frappe.ValueError = Error;
+frappe.ImportError = Error;
 frappe.provide('frappe.datetime')
 
 /**
@@ -177,11 +114,11 @@ frappe.datetime.compare = (a, b) => {
 }
 
 // frappe.quick_edit
-frappe.quick_edit      = (doctype, docname, fn) => {
+frappe.quick_edit = (doctype, docname, fn) => {
 	return new Promise(resolve => {
 		frappe.model.with_doctype(doctype, () => {
 			frappe.db.get_doc(doctype, docname).then(doc  => {
-				const meta     = frappe.get_meta(doctype)
+				const meta = frappe.get_meta(doctype)
 				const fields   = meta.fields
 				const required = fields.filter(f => f.reqd || f.bold && !f.read_only)
 
@@ -192,7 +129,7 @@ frappe.quick_edit      = (doctype, docname, fn) => {
 				})
 
 				const dialog   = new frappe.ui.Dialog({
-					 title: __(`Edit ${doctype} (${docname})`),
+					title: __(`Edit ${doctype} (${docname})`),
 					fields: required,
 					action: {
 						primary: {
@@ -591,38 +528,38 @@ frappe.log = frappe.Logger.get('frappe.chat', frappe.Logger.NOTSET)
 // frappe.chat.profile
 frappe.provide('frappe.chat.profile')
 
-/**
- * @description Create a Chat Profile.
- *
- * @param   {string|array} fields - (Optional) fields to be retrieved after creating a Chat Profile.
- * @param   {function}     fn     - (Optional) callback with the returned Chat Profile.
- *
- * @returns {Promise}
- *
- * @example
- * frappe.chat.profile.create(console.log)
- *
- * frappe.chat.profile.create("status").then(console.log) // { status: "Online" }
- */
-frappe.chat.profile.create = (fields, fn) => {
-	if ( typeof fields === "function" ) {
-		fn     = fields
-		fields = null
-	} else
-	if ( typeof fields === "string" )
-		fields = frappe._.as_array(fields)
+// /**
+//  * @description Create a Chat Profile.
+//  *
+//  * @param   {string|array} fields - (Optional) fields to be retrieved after creating a Chat Profile.
+//  * @param   {function}     fn     - (Optional) callback with the returned Chat Profile.
+//  *
+//  * @returns {Promise}
+//  *
+//  * @example
+//  * frappe.chat.profile.create(console.log)
+//  *
+//  * frappe.chat.profile.create("status").then(console.log) // { status: "Online" }
+//  */
+// frappe.chat.profile.create = (fields, fn) => {
+// 	if ( typeof fields === "function" ) {
+// 		fn     = fields
+// 		fields = null
+// 	} else
+// 	if ( typeof fields === "string" )
+// 		fields = frappe._.as_array(fields)
 
-	return new Promise(resolve => {
-		frappe.call("frappe.chat.doctype.chat_profile.chat_profile.create",
-			{ user: frappe.session.user, exists_ok: true, fields: fields },
-				response => {
-					if ( fn )
-						fn(response.message)
+// 	return new Promise(resolve => {
+// 		frappe.call("frappe.chat.doctype.chat_profile.chat_profile.create",
+// 			{ user: frappe.session.user, exists_ok: true, fields: fields },
+// 				response => {
+// 					if ( fn )
+// 						fn(response.message)
 
-					resolve(response.message)
-				})
-	})
-}
+// 					resolve(response.message)
+// 				})
+// 	})
+// }
 
 /**
  * @description Updates a Chat Profile.
@@ -647,44 +584,44 @@ frappe.chat.profile.update = (user, update, fn) => {
 }
 
 // frappe.chat.profile.on
-frappe.provide('frappe.chat.profile.on')
+// frappe.provide('frappe.chat.profile.on')
 
-/**
- * @description Triggers on a Chat Profile update of a user (Only if there's a one-on-one conversation).
- *
- * @param   {function} fn - (Optional) callback with the User and the Chat Profile update.
- *
- * @returns {Promise}
- *
- * @example
- * frappe.chat.profile.on.update(function (user, update)
- * {
- *      // do stuff
- * })
- */
-frappe.chat.profile.on.update = function (fn) {
-	frappe.realtime.on("frappe.chat.profile:update", r => fn(r.user, r.data))
-}
-frappe.chat.profile.STATUSES
-=
-[
-	{
-		name: "Online",
-	   color: "green"
-	},
-	{
-		 name: "Away",
-		color: "yellow"
-	},
-	{
-		 name: "Busy",
-		color: "red"
-	},
-	{
-		 name: "Offline",
-		color: "darkgrey"
-	}
-]
+// /**
+//  * @description Triggers on a Chat Profile update of a user (Only if there's a one-on-one conversation).
+//  *
+//  * @param   {function} fn - (Optional) callback with the User and the Chat Profile update.
+//  *
+//  * @returns {Promise}
+//  *
+//  * @example
+//  * frappe.chat.profile.on.update(function (user, update)
+//  * {
+//  *      // do stuff
+//  * })
+//  */
+// frappe.chat.profile.on.update = function (fn) {
+// 	frappe.realtime.on("frappe.chat.profile:update", r => fn(r.user, r.data))
+// }
+// frappe.chat.profile.STATUSES
+// =
+// [
+// 	{
+// 		name: "Online",
+// 	   color: "green"
+// 	},
+// 	{
+// 		 name: "Away",
+// 		color: "yellow"
+// 	},
+// 	{
+// 		 name: "Busy",
+// 		color: "red"
+// 	},
+// 	{
+// 		 name: "Offline",
+// 		color: "darkgrey"
+// 	}
+// ]
 
 // frappe.chat.room
 frappe.provide('frappe.chat.room')
@@ -1056,34 +993,34 @@ frappe.chat.emoji  = function (fn) {
 }
 
 // Website Settings
-frappe.provide('frappe.chat.website.settings')
-frappe.chat.website.settings = (fields, fn) =>
-{
-	if ( typeof fields === "function" ) {
-		fn     = fields
-		fields = null
-	} else
-	if ( typeof fields === "string" )
-		fields = frappe._.as_array(fields)
+// frappe.provide('frappe.chat.website.settings')
+// frappe.chat.website.settings = (fields, fn) =>
+// {
+// 	if ( typeof fields === "function" ) {
+// 		fn     = fields
+// 		fields = null
+// 	} else
+// 	if ( typeof fields === "string" )
+// 		fields = frappe._.as_array(fields)
 
-	return new Promise(resolve => {
-		frappe.call("frappe.chat.website.settings",
-			{ fields: fields })
-			.then(response => {
-				var message = response.message
+// 	return new Promise(resolve => {
+// 		frappe.call("frappe.chat.website.settings",
+// 			{ fields: fields })
+// 			.then(response => {
+// 				var message = response.message
 
-				if ( message.enable_from )
-					message   = { ...message, enable_from: new frappe.datetime.datetime(message.enable_from, 'HH:mm:ss') }
-				if ( message.enable_to )
-					message   = { ...message, enable_to:   new frappe.datetime.datetime(message.enable_to,   'HH:mm:ss') }
+// 				if ( message.enable_from )
+// 					message   = { ...message, enable_from: new frappe.datetime.datetime(message.enable_from, 'HH:mm:ss') }
+// 				if ( message.enable_to )
+// 					message   = { ...message, enable_to:   new frappe.datetime.datetime(message.enable_to,   'HH:mm:ss') }
 
-				if ( fn )
-					fn(message)
+// 				if ( fn )
+// 					fn(message)
 
-				resolve(message)
-			})
-	})
-}
+// 				resolve(message)
+// 			})
+// 	})
+// }
 
 frappe.chat.website.token    = (fn) =>
 {
@@ -1285,9 +1222,7 @@ frappe.components.Avatar.SIZE
  *     .set_options(options)
  *     .render()
  */
-frappe.Chat
-=
-class {
+frappe.Chat = class {
 	/**
 	 * @description Frappe Chat Object.
 	 *
@@ -1351,7 +1286,7 @@ class {
 	 * chat.render()
 	 *     .destroy()
 	 */
-	destroy ( ) {
+	destroy () {
 		const $wrapper = this.$wrapper
 		$wrapper.remove(".frappe-chat")
 
@@ -1492,44 +1427,44 @@ class extends Component {
 
 	make ( ) {
 		if ( frappe.session.user !== 'Guest' ) {
-			frappe.chat.profile.create([
-				"status", "message_preview", "notification_tones", "conversation_tones"
-			]).then(profile => {
-				this.set_state({ profile })
+			// frappe.chat.profile.create([
+			// 	"status", "message_preview", "notification_tones", "conversation_tones"
+			// ]).then(profile => {
+			// 	this.set_state({ profile })
 
-				frappe.chat.room.get(rooms => {
-					rooms = frappe._.as_array(rooms)
-					frappe.log.info(`User ${frappe.session.user} is subscribed to ${rooms.length} ${frappe._.pluralize('room', rooms.length)}.`)
+			// 	frappe.chat.room.get(rooms => {
+			// 		rooms = frappe._.as_array(rooms)
+			// 		frappe.log.info(`User ${frappe.session.user} is subscribed to ${rooms.length} ${frappe._.pluralize('room', rooms.length)}.`)
 
-					if ( !frappe._.is_empty(rooms) )
-						this.room.add(rooms)
-				})
+			// 		if ( !frappe._.is_empty(rooms) )
+			// 			this.room.add(rooms)
+			// 	})
 
-				this.bind()
-			})
+			// 	this.bind()
+			// })
 		} else {
 			this.bind()
 		}
 	}
 
 	bind ( ) {
-		frappe.chat.profile.on.update((user, update) => {
-			frappe.log.warn(`TRIGGER: Chat Profile update ${JSON.stringify(update)} of User ${user}.`)
+		// frappe.chat.profile.on.update((user, update) => {
+		// 	frappe.log.warn(`TRIGGER: Chat Profile update ${JSON.stringify(update)} of User ${user}.`)
 
-			if ( 'status' in update ) {
-				if ( user === frappe.session.user ) {
-					this.set_state({
-						profile: { ...this.state.profile, status: update.status }
-					})
-				} else {
-					const status = frappe.chat.profile.STATUSES.find(s => s.name === update.status)
-					const color  = status.color
+		// 	if ( 'status' in update ) {
+		// 		if ( user === frappe.session.user ) {
+		// 			this.set_state({
+		// 				profile: { ...this.state.profile, status: update.status }
+		// 			})
+		// 		} else {
+		// 			const status = frappe.chat.profile.STATUSES.find(s => s.name === update.status)
+		// 			const color  = status.color
 
-					const alert  = `<span class="indicator ${color}"/> ${frappe.user.full_name(user)} is currently <b>${update.status}</b>`
-					frappe.show_alert(alert, 3)
-				}
-			}
-		})
+		// 			const alert  = `<span class="indicator ${color}"/> ${frappe.user.full_name(user)} is currently <b>${update.status}</b>`
+		// 			frappe.show_alert(alert, 3)
+		// 		}
+		// 	}
+		// })
 
 		frappe.chat.room.on.create((room) => {
 			frappe.log.warn(`TRIGGER: Chat Room ${room.name} created.`)
@@ -2359,9 +2294,7 @@ class extends Component {
  *
  * @prop {boolean} groupable - Whether the ChatMessage is groupable.
  */
-frappe.chat.component.ChatBubble
-=
-class extends Component {
+frappe.chat.component.ChatBubble = class extends Component {
 	constructor (props) {
 		super (props)
 
@@ -2731,12 +2664,12 @@ frappe.chat.render = (render = true, force = false) =>
 }
 
 frappe.chat.setup  = () => {
-	frappe.log     = frappe.Logger.get('frappe.chat')
+	frappe.log = frappe.Logger.get('frappe.chat')
 
 	frappe.log.info('Setting up frappe.chat')
 	frappe.log.warn('TODO: frappe.chat.<object> requires a storage.')
 
-	if ( frappe.session.user !== 'Guest' ) {
+	if (frappe.session.user !== 'Guest' ) {
 		// Create/Get Chat Profile for session User, retrieve enable_chat
 		frappe.log.info('Creating a Chat Profile.')
 
