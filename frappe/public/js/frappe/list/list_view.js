@@ -152,20 +152,31 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	}
 
 	set_fields() {
-		let fields = [].concat(
-			frappe.model.std_fields_list,
-			this.get_fields_in_list_view(),
-			[this.meta.title_field, this.meta.image_field],
-			(this.settings.add_fields || []),
-			this.meta.track_seen ? '_seen' : null,
-			this.sort_by,
-			'enabled',
-			'disabled',
-			'color'
-		);
+		let fields = []
+		console.log(this.list_view_settings);
+		if (!this.list_view_settings.columns) {
+			fields.concat(
+				frappe.model.std_fields_list,
+				this.get_fields_in_list_view(),
+				[this.meta.title_field, this.meta.image_field],
+				(this.settings.add_fields || []),
+				this.meta.track_seen ? '_seen' : null,
+				this.sort_by,
+				'enabled',
+				'disabled',
+				'color'
+			);
+		} else {
+
+			for (let i in this.list_view_settings.columns) {
+				let column = this.list_view_settings.columns[i];
+				fields.push(column);
+			}
+		}
 
 		fields.forEach(f => this._add_field(f));
-
+		console.log(fields);
+		console.log(this.fields);
 		this.fields.forEach(f => {
 			const df = frappe.meta.get_docfield(f[1], f[0]);
 			if (df && df.fieldtype === 'Currency' && df.options && !df.options.includes(':')) {
