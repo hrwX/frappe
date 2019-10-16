@@ -190,8 +190,12 @@ frappe.ui.form.Form = class FrappeForm {
 				} else {
 					me.dirty();
 				}
-				me.fields_dict[fieldname]
-					&& me.fields_dict[fieldname].refresh(fieldname);
+
+				let field = me.fields_dict[fieldname];
+				field && field.refresh(fieldname);
+
+				// Validate value for link field explicitly
+				field && ["Link", "Dynamic Link"].includes(field.df.fieldtype) && field.validate && field.validate(value);
 
 				me.layout.refresh_dependency();
 				let object = me.script_manager.trigger(fieldname, doc.doctype, doc.name);
@@ -1365,6 +1369,8 @@ frappe.ui.form.Form = class FrappeForm {
 				frappe.get_meta(doctype).fields.forEach(function(df) {
 					if(df.fieldtype==='Link' && df.options===me.doctype) {
 						new_doc[df.fieldname] = me.doc.name;
+					} else if (['Link', 'Dynamic Link'].includes(df.fieldtype) && me.doc[df.fieldname]) {
+						new_doc[df.fieldname] = me.doc[df.fieldname];
 					}
 				});
 
@@ -1390,6 +1396,28 @@ frappe.ui.form.Form = class FrappeForm {
 			sum += d[fieldname];
 		}
 		return sum;
+	}
+
+	scroll_to_field(fieldname) {
+		let field = this.get_field(fieldname);
+		if (!field) return;
+
+		let $el = field.$wrapper;
+
+		// uncollapse section
+		if (field.section.is_collapsed()) {
+			field.section.collapse(false);
+		}
+
+		// scroll to input
+		frappe.utils.scroll_to($el);
+
+		// highlight input
+		$el.addClass('has-error');
+		setTimeout(() => {
+			$el.removeClass('has-error');
+			$el.find('input, select, textarea').focus();
+		}, 1000);
 	}
 };
 
