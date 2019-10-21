@@ -1228,10 +1228,14 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	}
 
 	show_list_settings() {
-		frappe.model.with_doctype("List View Setting", () => {
+		frappe.model.with_doctype("List View Settings", () => {
 			let d = new frappe.ui.Dialog({
 				title: __("Settings"),
-				fields: frappe.get_meta("List View Setting").fields
+				fields: [
+					frappe.get_meta("List View Settings").fields[0],
+					frappe.get_meta("List View Settings").fields[1],
+					frappe.get_meta("List View Settings").fields[2]
+				]
 			});
 			d.set_values(this.list_view_settings);
 			d.show();

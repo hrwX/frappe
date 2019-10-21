@@ -1,0 +1,65 @@
+{
+ "autoname": "Prompt",
+ "creation": "2019-10-22 00:00:37.895277",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "disable_count",
+  "disable_sidebar_stats",
+  "disable_auto_refresh",
+  "sb_columns",
+  "columns"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "fieldname": "disable_count",
+   "fieldtype": "Check",
+   "label": "Disable Count"
+  },
+  {
+   "default": "0",
+   "fieldname": "disable_sidebar_stats",
+   "fieldtype": "Check",
+   "label": "Disable Sidebar Stats"
+  },
+  {
+   "default": "0",
+   "fieldname": "disable_auto_refresh",
+   "fieldtype": "Check",
+   "label": "Disable Auto Refresh"
+  },
+  {
+   "fieldname": "sb_columns",
+   "fieldtype": "Section Break",
+   "label": "Custom Columns"
+  },
+  {
+   "fieldname": "columns",
+   "fieldtype": "Table",
+   "label": "Columns",
+   "options": "List View Column"
+  }
+ ],
+ "modified": "2019-10-22 00:02:51.156845",
+ "modified_by": "Administrator",
+ "module": "Desk",
+ "name": "List View Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
