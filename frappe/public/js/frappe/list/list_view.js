@@ -155,6 +155,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		let fields = [].concat(
 			frappe.model.std_fields_list,
 			this.get_fields_in_list_view(),
+			this.get_custom_fields_in_list_view(),
 			[this.meta.title_field, this.meta.image_field],
 			(this.settings.add_fields || []),
 			this.meta.track_seen ? '_seen' : null,
@@ -172,6 +173,29 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 				this._add_field(df.options);
 			}
 		});
+	}
+
+	get_custom_fields_in_list_view () {
+		if (this.list_view_settings.columns && this.list_view_settings.columns.length > 0) {
+			let columns = [];
+
+			for (let i in this.list_view_settings.columns) {
+				let column = this.list_view_settings.columns[i];
+				let df = frappe.meta.get_docfield(this.doctype, column.column_name);
+
+				if (frappe.model.is_value_type(df.fieldtype) && ((frappe.perm.has_perm(this.doctype, df.permlevel, 'read')) || (
+					df.fieldtype === 'Currency'
+					&& df.options
+					&& !df.options.includes(':')
+				) || (
+					df.fieldname === 'status'
+				))) {
+					columns.push(df);
+				}
+			}
+
+			return columns;
+		}
 	}
 
 	patch_refresh_and_load_lib() {
@@ -267,7 +291,12 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 			});
 		}
 
-		const fields_in_list_view = this.get_fields_in_list_view();
+		const fields_in_list_view = [].concat(
+				this.get_fields_in_list_view(),
+				this.get_custom_fields_in_list_view()
+			);
+
+		console.log(fields_in_list_view);
 		// Add rest from in_list_view docfields
 		this.columns = this.columns.concat(
 			fields_in_list_view
@@ -287,7 +316,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		);
 
 		// limit to 4 columns
-		this.columns = this.columns.slice(0, 4);
+		// this.columns = this.columns.slice(0, 4);
 	}
 
 	get_no_result_message() {
@@ -447,9 +476,13 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 			<span class="level-item">${__(subject_field.label)}</span>
 		`;
 		const $columns = this.columns.map(col => {
+			let subject_length = 'list-subject level';
+			if (this.get_custom_fields_in_list_view().length) {
+				subject_length = 'list-subject-small level';
+			}
 			let classes = [
 				'list-row-col ellipsis',
-				col.type == 'Subject' ? 'list-subject level' : 'hidden-xs',
+				col.type == 'Subject' ? subject_length : 'hidden-xs',
 				frappe.model.is_numeric_field(col.df) ? 'text-right' : ''
 			].join(' ');
 

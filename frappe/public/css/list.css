@@ -121,6 +121,9 @@
 .list-row-head .list-subject {
   font-weight: normal;
 }
+.list-row-head  .list-subject-small {
+  font-weight: normal;
+}
 .list-row-head .checkbox-actions {
   display: none;
 }
@@ -132,10 +135,20 @@
   flex: 2;
   justify-content: start;
 }
+.list-subject-small {
+  flex: 1;
+  justify-content: start;
+}
 .list-subject .level-item {
   margin-right: 8px;
 }
+.list-subject-small .level-item {
+  margin-right: 8px;
+}
 .list-subject.seen {
+  font-weight: normal;
+}
+.list-subject-small .seen {
   font-weight: normal;
 }
 .list-row-activity {
