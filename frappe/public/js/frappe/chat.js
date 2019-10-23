@@ -1,22 +1,39 @@
 // Frappe Chat
 // Author - Achilles Rasquinha <achilles@frappe.io>
 
-import Fuse from 'fuse.js'
-import hyper from '../lib/hyper.min'
+import Fuse from 'fuse.js';
+import hyper from '../lib/hyper.min';
 
-import './socketio_client'
-import './ui/dialog'
-import './ui/capture'
-import './utils/user'
+import './socketio_client';
+import './ui/dialog';
+import './ui/capture';
+import './utils/user';
 
-frappe.provide('frappe.chat')
-frappe.provide('frappe.user')
-frappe.provide('frappe.datetime')
-frappe.provide('frappe._')
-frappe.provide('frappe.loggers')
-frappe.provide('frappe.ui.keycode')
-frappe.provide('frappe.stores')
-/* eslint semi: "never" */
+frappe.provide('frappe.chat');
+frappe.provide('frappe.user');
+frappe.provide('frappe.datetime');
+frappe.provide('frappe._');
+frappe.provide('frappe.loggers');
+frappe.provide('frappe.ui.keycode');
+frappe.provide('frappe.stores');
+
+frappe.provide('frappe.boot')''
+frappe.provide('frappe.browser')''
+frappe.provide('frappe.assets')''
+
+frappe.provide('frappe.chat.website.settings');
+frappe.provide('frappe.chat.sound');
+frappe.provide('frappe.chat.message');
+frappe.provide('frappe.chat.message.on');
+
+frappe.provide('frappe.chat.room');
+frappe.provide('frappe.chat.room.on');
+
+frappe.provide('frappe.chat.profile');
+frappe.provide('frappe.chat.profile.on');
+
+frappe.provide('frappe.components');
+frappe.provide('frappe.chat.component');
 
 // frappe extensions
 
@@ -50,7 +67,7 @@ frappe.datetime.datetime = class {
 		const  formatted = this.moment.format(format)
 		return formatted
 	}
-}
+};
 
 /**
  * @description Frappe's daterange object.
@@ -64,8 +81,8 @@ frappe.datetime.range = class {
 		if ( typeof moment === undefined )
 			throw new frappe.ImportError(`Moment.js not installed.`)
 
-		this.start = start
-		this.end = end
+		this.start = start;
+		this.end = end;
 	}
 
 	contains (datetime) {
@@ -88,25 +105,10 @@ frappe.datetime.equal = (a, b, type) => {
 
 	const equal = a.isSame(b, type);
 
-	return equal
+	return equal;
 }
 
-/**
- * @description Compares two frappe.datetime.datetime objects.
- *
- * @param   {frappe.datetime.datetime} a - A frappe.datetime.datetime/moment object.
- * @param   {frappe.datetime.datetime} b - A frappe.datetime.datetime/moment object.
- *
- * @returns {number} 0 (if a and b are equal), 1 (if a is before b), -1 (if a is after b).
- *
- * @example
- * frappe.datetime.compare(frappe.datetime.now(), frappe.datetime.now())
- * // returns 0
- * const then = frappe.datetime.now()
- *
- * frappe.datetime.compare(then, frappe.datetime.now())
- * // returns 1
- */
+// Compares two frappe.datetime.datetime objects.
 frappe.datetime.compare = (a, b) => {
 	a = a.moment;
 	b = b.moment;
@@ -186,18 +188,7 @@ frappe.quick_edit = (doctype, docname, fn) => {
 
 // String Utilities
 
-/**
- * @description Python-inspired format extension for string objects.
- *
- * @param  {string} string - A string with placeholders.
- * @param  {object} object - An object with placeholder, value pairs.
- *
- * @return {string}        - The formatted string.
- *
- * @example
- * frappe._.format('{foo} {bar}', { bar: 'foo', foo: 'bar' })
- * // returns "bar foo"
- */
+// Python-inspired format extension for string objects.
 frappe._.format = (string, object) => {
 	for (const key in object){
 		string = string.replace(`{${key}}`, object[key])
@@ -206,21 +197,8 @@ frappe._.format = (string, object) => {
 	return string;
 }
 
-/**
- * @description Fuzzy Search a given query within a dataset.
- *
- * @param  {string} query   - A query string.
- * @param  {array}  dataset - A dataset to search within, can contain singletons or objects.
- * @param  {object} options - Options as per fuze.js
- *
- * @return {array}          - The fuzzy matched index/object within the dataset.
- *
- * @example
- * frappe._.fuzzy_search("foobar", ["foobar", "bartender"])
- * // returns [0, 1]
- *
- * @see http://fusejs.io
- */
+// Fuzzy Search a given query within a dataset.
+// frappe._.fuzzy_search("foobar", ["foobar", "bartender"])
 frappe._.fuzzy_search = (query, dataset, options) => {
 	const DEFAULT = {
 		shouldSort: true,
@@ -238,35 +216,10 @@ frappe._.fuzzy_search = (query, dataset, options) => {
 	return result
 }
 
-/**
- * @description Pluralizes a given word.
- *
- * @param  {string} word  - The word to be pluralized.
- * @param  {number} count - The count.
- *
- * @return {string}       - The pluralized string.
- *
- * @example
- * frappe._.pluralize('member',  1)
- * // returns "member"
- * frappe._.pluralize('members', 0)
- * // returns "members"
- *
- * @todo Handle more edge cases.
- */
+// Pluralizes a given word
 frappe._.pluralize = (word, count = 0, suffix = 's') => `${word}${count === 1 ? '' : suffix}`
 
-/**
- * @description Captializes a given string.
- *
- * @param   {word}  - The word to be capitalized.
- *
- * @return {string} - The capitalized word.
- *
- * @example
- * frappe._.capitalize('foobar')
- * // returns "Foobar"
- */
+//Captializes a given string.
 frappe._.capitalize = word => `${word.charAt(0).toUpperCase()}${word.slice(1)}`
 
 // Array Utilities
@@ -536,40 +489,41 @@ frappe.Logger.FORMAT = '{time} {name}'
 frappe.log = frappe.Logger.get('frappe.chat', frappe.Logger.NOTSET)
 
 // frappe.chat.profile
-frappe.provide('frappe.chat.profile')
 
-// /**
-//  * @description Create a Chat Profile.
-//  *
-//  * @param   {string|array} fields - (Optional) fields to be retrieved after creating a Chat Profile.
-//  * @param   {function}     fn     - (Optional) callback with the returned Chat Profile.
-//  *
-//  * @returns {Promise}
-//  *
-//  * @example
-//  * frappe.chat.profile.create(console.log)
-//  *
-//  * frappe.chat.profile.create("status").then(console.log) // { status: "Online" }
-//  */
-// frappe.chat.profile.create = (fields, fn) => {
-// 	if ( typeof fields === "function" ) {
-// 		fn     = fields
-// 		fields = null
-// 	} else
-// 	if ( typeof fields === "string" )
-// 		fields = frappe._.as_array(fields)
 
-// 	return new Promise(resolve => {
-// 		frappe.call("frappe.chat.doctype.chat_profile.chat_profile.create",
-// 			{ user: frappe.session.user, exists_ok: true, fields: fields },
-// 				response => {
-// 					if ( fn )
-// 						fn(response.message)
+/**
+ * @description Create a Chat Profile.
+ *
+ * @param   {string|array} fields - (Optional) fields to be retrieved after creating a Chat Profile.
+ * @param   {function}     fn     - (Optional) callback with the returned Chat Profile.
+ *
+ * @returns {Promise}
+ *
+ * @example
+ * frappe.chat.profile.create(console.log)
+ *
+ * frappe.chat.profile.create("status").then(console.log) // { status: "Online" }
+ */
+frappe.chat.profile.create = (fields, fn) => {
+	if ( typeof fields === "function" ) {
+		fn     = fields
+		fields = null
+	} else
+	if ( typeof fields === "string" )
+		fields = frappe._.as_array(fields)
 
-// 					resolve(response.message)
-// 				})
-// 	})
-// }
+	return new Promise(resolve => {
+		resolve()
+		// frappe.call("frappe.chat.doctype.chat_profile.chat_profile.create",
+		// 	{ user: frappe.session.user, exists_ok: true, fields: fields },
+		// 		response => {
+		// 			if ( fn )
+		// 				fn(response.message)
+
+		// 			resolve(response.message)
+		// 		})
+	})
+}
 
 /**
  * @description Updates a Chat Profile.
@@ -594,7 +548,7 @@ frappe.chat.profile.update = (user, update, fn) => {
 }
 
 frappe.chat.profile.on
-frappe.provide('frappe.chat.profile.on')
+
 
 /**
  * @description Triggers on a Chat Profile update of a user (Only if there's a one-on-one conversation).
@@ -633,7 +587,7 @@ frappe.chat.profile.STATUSES = [
 ]
 
 // frappe.chat.room
-frappe.provide('frappe.chat.room')
+
 
 /**
  * @description Creates a Chat Room.
@@ -847,7 +801,7 @@ frappe.chat.room.sort = function (rooms, compare = null) {
 }
 
 // frappe.chat.room.on
-frappe.provide('frappe.chat.room.on')
+
 
 /**
  * @description Triggers on Chat Room updated.
@@ -885,7 +839,7 @@ frappe.chat.room.on.typing = function (fn) {
 }
 
 // frappe.chat.message
-frappe.provide('frappe.chat.message')
+
 
 frappe.chat.message.typing = function (room, user) {
 	frappe.realtime.publish("frappe.chat.message:typing", { user: user || frappe.session.user, room: room })
@@ -924,7 +878,7 @@ frappe.chat.message.seen = (mess, user) => {
 		{ message: mess, user: user || frappe.session.user })
 }
 
-frappe.provide('frappe.chat.message.on')
+
 frappe.chat.message.on.create = function (fn) {
 	frappe.realtime.on("frappe.chat.message:create", r =>
 		fn({ ...r, creation: new frappe.datetime.datetime(r.creation) })
@@ -949,7 +903,7 @@ frappe.chat.pretty_datetime   = function (date) {
 }
 
 // frappe.chat.sound
-frappe.provide('frappe.chat.sound')
+
 
 /**
  * @description Plays a given registered sound.
@@ -1002,7 +956,7 @@ frappe.chat.emoji  = function (fn) {
 }
 
 // Website Settings
-frappe.provide('frappe.chat.website.settings')
+
 frappe.chat.website.settings = (fields, fn) =>
 {
 	if ( typeof fields === "function" ) {
@@ -1047,9 +1001,7 @@ const { h, Component } = hyper
 
 // frappe.components
 // frappe's component namespace.
-frappe.provide('frappe.components')
 
-frappe.provide('frappe.chat.component')
 
 /**
  * @description Button Component
@@ -1062,7 +1014,7 @@ frappe.components.Button
 class extends Component {
 	render () {
 		const { props } = this
-		const size      = frappe.components.Button.SIZE[props.size]
+		const size = frappe.components.Button.SIZE[props.size]
 
 		return (
 			h("button", { ...props, class: `btn ${size && size.class} btn-${props.type} ${props.block ? "btn-block" : ""} ${props.class ? props.class : ""}` },
@@ -2499,7 +2451,7 @@ frappe.chat.component.EmojiPicker.List = class extends Component {
 /**
  * @description Python equivalent to sys.platform
  */
-frappe.provide('frappe._')
+
 frappe._.platform = () => {
 	const string = navigator.appVersion
 
@@ -2514,7 +2466,7 @@ frappe._.platform = () => {
 /**
  * @description Frappe's Asset Helper
  */
-frappe.provide('frappe.assets')
+
 frappe.assets.image = (image, app = 'frappe') => {
 	const  path = `/assets/${app}/images/${image}`
 	return path
@@ -2523,8 +2475,7 @@ frappe.assets.image = (image, app = 'frappe') => {
 /**
  * @description Notify using Web Push Notifications
  */
-frappe.provide('frappe.boot')
-frappe.provide('frappe.browser')
+
 frappe.browser.Notification = 'Notification' in window
 
 frappe.notify = (string, options) => {
@@ -2546,8 +2497,7 @@ frappe.notify = (string, options) => {
 	})
 }
 
-frappe.chat.render = (render = true, force = false) =>
-{
+frappe.chat.render = (render = true, force = false) => {
 	frappe.log.info(`${render ? "Enable" : "Disable"} Chat for User.`)
 
 	const desk = 'desk' in frappe
@@ -2632,60 +2582,44 @@ frappe.chat.render = (render = true, force = false) =>
 frappe.chat.setup  = () => {
 	frappe.log = frappe.Logger.get('frappe.chat')
 
-	frappe.log.info('Setting up frappe.chat')
-	frappe.log.warn('TODO: frappe.chat.<object> requires a storage.')
-
-	if (frappe.session.user !== 'Guest' ) {
+	if (frappe.session.user !== 'Guest') {
 		// Create/Get Chat Profile for session User, retrieve enable_chat
-		frappe.log.info('Creating a Chat Profile.')
-
-		frappe.chat.profile.create('enable_chat').then(({ enable_chat }) => {
-			frappe.log.info(`Chat Profile created for User ${frappe.session.user}.`)
-
-			if ( 'desk' in frappe && frappe.sys_defaults ) { // same as desk?
-				const should_render = Boolean(parseInt(frappe.sys_defaults.enable_chat)) && enable_chat
-				frappe.chat.render(should_render)
-			}
-		})
+		if ('desk' in frappe && frappe.sys_defaults) { // same as desk?
+			frappe.chat.render()
+		}
 
 		// Triggered when a User updates his/her Chat Profile.
 		// Don't worry, enable_chat is broadcasted to this user only. No overhead. :)
 		frappe.chat.profile.on.update((user, profile) => {
-			if ( user === frappe.session.user && 'enable_chat' in profile ) {
-				frappe.log.warn(`Chat Profile update (Enable Chat - ${Boolean(profile.enable_chat)})`)
-				const should_render = Boolean(parseInt(frappe.sys_defaults.enable_chat)) && profile.enable_chat
-				frappe.chat.render(should_render)
+			if (user === frappe.session.user) {
+				frappe.chat.render()
 			}
 		})
 	} else {
 		// Website Settings
 		frappe.log.info('Retrieving Chat Website Settings.')
-		frappe.chat.website.settings(["socketio", "enable", "enable_from", "enable_to"])
-			.then(settings => {
-				frappe.log.info(`Chat Website Setting - ${JSON.stringify(settings)}`)
-				frappe.log.info(`Chat Website Setting - ${settings.enable ? "Enable" : "Disable"}`)
+		frappe.chat.website.settings(["socketio", "enable", "enable_from", "enable_to"]).then(settings => {
+			var should_render = settings.enable
+			if ( settings.enable_from && settings.enable_to ) {
+				frappe.log.info(`Enabling Chat Schedule - ${settings.enable_from.format()} : ${settings.enable_to.format()}`)
 
-				var should_render = settings.enable
-				if ( settings.enable_from && settings.enable_to ) {
-					frappe.log.info(`Enabling Chat Schedule - ${settings.enable_from.format()} : ${settings.enable_to.format()}`)
+				const range   = new frappe.datetime.range(settings.enable_from, settings.enable_to)
+				should_render = range.contains(frappe.datetime.now())
+			}
 
-					const range   = new frappe.datetime.range(settings.enable_from, settings.enable_to)
-					should_render = range.contains(frappe.datetime.now())
-				}
+			if ( should_render ) {
+				frappe.log.info("Initializing Socket.IO")
+				frappe.socketio.init(settings.socketio.port)
+			}
 
-				if ( should_render ) {
-					frappe.log.info("Initializing Socket.IO")
-					frappe.socketio.init(settings.socketio.port)
-				}
-
-				frappe.chat.render(should_render)
+			frappe.chat.render(should_render)
 		})
 	}
 }
 
 $(document).on('ready toolbar_setup', () => {
-	frappe.db.get_value("System Settings", 'document_type', (r) => {
-		if (r && r.message) {
+	frappe.db.get_value("System Settings", "System Settings", "enable_chat", (r) => {
+		if (r && r.enable_chat) {
 			frappe.chat.setup();
 		}
 	})
