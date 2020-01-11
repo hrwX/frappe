@@ -8,9 +8,9 @@ frappe.ui.form.on("Contact", {
 	refresh: function(frm) {
 		if(frm.doc.__islocal) {
 			const last_doc = frappe.contacts.get_last_doc(frm);
-			if(frappe.dynamic_link && frappe.dynamic_link.doc
-					&& frappe.dynamic_link.doc.name == last_doc.docname) {
-				frm.set_value('links', '');
+
+			if(frappe.dynamic_link && frappe.dynamic_link.doc && frappe.dynamic_link.doc.name == last_doc.docname) {
+				frm.clear_table('links')
 				frm.add_child('links', {
 					link_doctype: frappe.dynamic_link.doctype,
 					link_name: frappe.dynamic_link.doc[frappe.dynamic_link.fieldname]
@@ -31,6 +31,7 @@ frappe.ui.form.on("Contact", {
 				});
 			});
 		}
+
 		frm.set_query('link_doctype', "links", function() {
 			return {
 				query: "frappe.contacts.address_and_contact.filter_dynamic_link_doctypes",
@@ -40,6 +41,7 @@ frappe.ui.form.on("Contact", {
 				}
 			}
 		});
+
 		frm.refresh_field("links");
 
 		if (frm.doc.links.length > 0) {
@@ -59,6 +61,20 @@ frappe.ui.form.on("Contact", {
 				}
 			});
 		}
+
+		if (frm.doc.links) {
+			let doctype = null;
+			let name = null;
+
+			for (let i in frm.doc.links) {
+				doctype = frm.doc.links[i].link_doctype;
+				name = frm.doc.links[i].link_name;
+
+				frm.add_custom_button(name, function() {
+					frappe.set_route("Form", doctype, name);
+				}, "Open");
+			}
+		}
 	},
 	validate: function(frm) {
 		// clear linked customer / supplier / sales partner on saving...
@@ -67,18 +83,6 @@ frappe.ui.form.on("Contact", {
 				frappe.model.remove_from_locals(d.link_doctype, d.link_name);
 			});
 		}
-	},
-	after_save: function(frm) {
-		frappe.run_serially([
-			() => frappe.timeout(1),
-			() => {
-				const last_doc = frappe.contacts.get_last_doc(frm);
-				if(frappe.dynamic_link && frappe.dynamic_link.doc
-					&& frappe.dynamic_link.doc.name == last_doc.docname){
-					frappe.set_route('Form', last_doc.doctype, last_doc.docname);
-				}
-			}
-		]);
 	},
 	sync_with_google_contacts: function(frm) {
 		if (frm.doc.sync_with_google_contacts) {
