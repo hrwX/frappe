@@ -42,7 +42,7 @@ frappe.ui.form.on("Contact", {
 		});
 		frm.refresh_field("links");
 
-		if (frm.doc.links.length > 0) {
+		if (frm.doc.links) {
 			frappe.call({
 				method: "frappe.contacts.doctype.contact.contact.address_query",
 				args: {links: frm.doc.links},
@@ -58,6 +58,13 @@ frappe.ui.form.on("Contact", {
 					}
 				}
 			});
+
+			for (let i in frm.doc.links) {
+				let link = frm.doc.links[i];
+				frm.add_custom_button(__("{0}: {1}", [__(link.link_doctype), __(link.link_name)]), function() {
+					frappe.set_route("Form", link.link_doctype, link.link_name);
+				}, "GoTo");
+			}
 		}
 	},
 	validate: function(frm) {

@@ -24,6 +24,15 @@ frappe.ui.form.on("Address", {
 			}
 		});
 		frm.refresh_field("links");
+
+		if (frm.doc.links) {
+			for (let i in frm.doc.links) {
+				let link = frm.doc.links[i];
+				frm.add_custom_button(__("{0}: {1}", [__(link.link_doctype), __(link.link_name)]), function() {
+					frappe.set_route("Form", link.link_doctype, link.link_name);
+				}, "GoTo");
+			}
+		}
 	},
 	validate: function(frm) {
 		// clear linked customer / supplier / sales partner on saving...
