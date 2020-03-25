@@ -35,18 +35,6 @@ frappe.ui.form.on("Communication", {
 			}
 		}
 
-		if(frm.doc.status==="Open") {
-			frm.add_custom_button(__("Close"), function() {
-				frm.set_value("status", "Closed");
-				frm.save();
-			});
-		} else if (frm.doc.status !== "Linked") {
-			frm.add_custom_button(__("Reopen"), function() {
-				frm.set_value("status", "Open");
-				frm.save();
-			});
-		}
-
 		frm.add_custom_button(__("Relink"), function() {
 			frm.trigger('show_relink_dialog');
 		});
