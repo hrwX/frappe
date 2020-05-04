@@ -212,9 +212,10 @@ frappe.ui.form.Layout = Class.extend({
 		}
 	},
 
-	refresh: function(doc) {
+	refresh: function(doc, customize=false) {
 		var me = this;
 		if(doc) this.doc = doc;
+		this.customize = customize;
 
 		if (this.frm) {
 			this.wrapper.find(".empty-form-alert").remove();
@@ -236,6 +237,10 @@ frappe.ui.form.Layout = Class.extend({
 		// collapse sections
 		if(this.frm) {
 			this.refresh_section_collapse();
+		}
+
+		if (this.customize) {
+			this.enable_form_customization()
 		}
 	},
 
@@ -309,9 +314,8 @@ frappe.ui.form.Layout = Class.extend({
 
 	attach_doc_and_docfields: function(refresh) {
 		var me = this;
-		for(var i=0, l=this.fields_list.length; i<l; i++) {
-			var fieldobj = this.fields_list[i];
-			if(me.doc) {
+		this.fields_list.forEach(fieldobj => {
+			if (me.doc) {
 				fieldobj.doc = me.doc;
 				fieldobj.doctype = me.doc.doctype;
 				fieldobj.docname = me.doc.name;
@@ -324,7 +328,7 @@ frappe.ui.form.Layout = Class.extend({
 				}
 			}
 			refresh && fieldobj.df && fieldobj.refresh && fieldobj.refresh();
-		}
+		});
 	},
 
 	refresh_section_count: function() {
@@ -332,6 +336,7 @@ frappe.ui.form.Layout = Class.extend({
 			$(this).html(i+1);
 		});
 	},
+
 	setup_tabbing: function() {
 		var me = this;
 		this.wrapper.on("keydown", function(ev) {
@@ -344,6 +349,7 @@ frappe.ui.form.Layout = Class.extend({
 			}
 		});
 	},
+
 	handle_tab: function(doctype, fieldname, shift) {
 		var me = this,
 			grid_row = null,
@@ -403,6 +409,7 @@ frappe.ui.form.Layout = Class.extend({
 
 		return false;
 	},
+
 	focus_on_next_field: function(start_idx, fields) {
 		// loop to find next eligible fields
 		for(var i= start_idx + 1, len = fields.length; i < len; i++) {
@@ -425,9 +432,11 @@ frappe.ui.form.Layout = Class.extend({
 			}
 		}
 	},
+
 	is_visible: function(field) {
 		return field.disp_status==="Write" && (field.$wrapper && field.$wrapper.is(":visible"));
 	},
+
 	set_focus: function(field) {
 		// next is table, show the table
 		if(field.df.fieldtype=="Table") {
@@ -442,9 +451,11 @@ frappe.ui.form.Layout = Class.extend({
 			field.$input.focus();
 		}
 	},
+
 	get_open_grid_row: function() {
 		return $(".grid-row-open").data("grid_row");
 	},
+
 	refresh_dependency: function() {
 		// Resolve "depends_on" and show / hide accordingly
 		var me = this;
@@ -496,6 +507,7 @@ frappe.ui.form.Layout = Class.extend({
 
 		this.refresh_section_count();
 	},
+
 	set_dependant_property: function(condition, fieldname, property) {
 		let set_property = this.evaluate_depends_on_value(condition);
 		if (this.frm) {
@@ -506,6 +518,7 @@ frappe.ui.form.Layout = Class.extend({
 			}
 		}
 	},
+
 	evaluate_depends_on_value: function(expression) {
 		var out = null;
 		var doc = this.doc;
@@ -548,6 +561,15 @@ frappe.ui.form.Layout = Class.extend({
 		}
 
 		return out;
+	},
+
+	enable_form_customization() {
+		this.fields_list.forEach(field => {
+			this.frm.set_df_property(field.df.fieldname, "hidden", 0);
+			field.disable && field.disable();
+			field.collapse && field.collapse(false);
+			field.frappe_control_droparea && field.frappe_control_droparea();
+		})
 	}
 });
 
@@ -577,8 +599,9 @@ frappe.ui.form.Section = Class.extend({
 			this.layout.page = $('<div class="form-page"></div>').appendTo(this.layout.wrapper);
 		}
 
-		this.wrapper = $('<div class="row form-section">')
-			.appendTo(this.layout.page);
+		this.wrapper = $(`
+			<div class="row form-section" data-fieldtype="Section Break" data-fieldname="${this.df.fieldname}">
+		`).appendTo(this.layout.page);
 		this.layout.sections.push(this);
 
 		if(this.df) {
@@ -682,14 +705,14 @@ frappe.ui.form.Column = Class.extend({
 		this.resize_all_columns();
 	},
 	make: function() {
-		this.wrapper = $('<div class="form-column">\
-			<form>\
-			</form>\
-		</div>').appendTo(this.section.body)
-			.find("form")
-			.on("submit", function() {
-				return false;
-			});
+		this.wrapper = $(`
+			<div class="form-column" data-fieldtype="Column Break" data-fieldname="${this.df.fieldname}">
+				<form class="frappe-form">
+				</form>
+			</div>
+		`).appendTo(this.section.body).find("form").on("submit", function() {
+			return false;
+		});
 
 		if (this.df.label) {
 			$('<label class="control-label">' + __(this.df.label)
@@ -707,5 +730,11 @@ frappe.ui.form.Column = Class.extend({
 	},
 	refresh: function() {
 		this.section.refresh();
+		this.section.wrapper.find(".frappe-control-customize").removeClass();
+		this.section.wrapper.find(".frappe-form-droparea").removeClass();
+	},
+	frappe_control_droparea: function() {
+		this.section.wrapper.find(".form-column").addClass("frappe-control-customize");
+		this.section.wrapper.find(".frappe-form").addClass("frappe-form-droparea");
 	}
 });

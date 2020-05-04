@@ -6,6 +6,7 @@ import './dashboard';
 import './workflow';
 import './save';
 import './print';
+import './customize_form';
 import './success_action';
 import './script_manager';
 import './script_helpers';
@@ -148,11 +149,11 @@ frappe.ui.form.Form = class FrappeForm {
 	}
 
 	setup_std_layout() {
-		this.form_wrapper 	= $('<div></div>').appendTo(this.layout_main);
-		this.body 			= $('<div></div>').appendTo(this.form_wrapper);
+		this.form_wrapper = $('<div></div>').appendTo(this.layout_main);
+		this.body = $('<div></div>').appendTo(this.form_wrapper);
 
 		// only tray
-		this.meta.section_style='Simple'; // always simple!
+		this.meta.section_style = 'Simple'; // always simple!
 
 		// layout
 		this.layout = new frappe.ui.form.Layout({
@@ -1538,6 +1539,32 @@ frappe.ui.form.Form = class FrappeForm {
 			$el.removeClass('has-error');
 			$el.find('input, select, textarea').focus();
 		}, 1000);
+	}
+
+	enable_customize_form() {
+		this.layout.refresh(this.doc, true);
+		this.setup_sortable();
+	}
+
+	setup_sortable() {
+		// Setup sortable for frappe-controls to move over all the form sections
+		let forms = this.wrapper.getElementsByClassName("frappe-form");
+		for (let i = 0; i < forms.length; i++) {
+			new Sortable(forms.item(i), {
+				group: "form",
+				handle: ".frappe-control",
+				fallbackOnBody: true,
+				swapThreshold: 0.65,
+				onUpdate: () => {
+
+				}
+			});
+		}
+	}
+
+	customize_field(df) {
+		// Updates meta based on the values changed for docfield
+		new frappe.ui.form.CustomizeField(df, this.meta);
 	}
 };
 

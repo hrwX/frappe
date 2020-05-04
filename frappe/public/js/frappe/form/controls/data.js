@@ -116,5 +116,8 @@ frappe.ui.form.ControlData = frappe.ui.form.ControlInput.extend({
 		} else {
 			return v;
 		}
+	},
+	disable() {
+		this.$input && this.$input.attr("disabled", true);
 	}
 });

@@ -12,18 +12,18 @@ frappe.ui.form.ControlInput = frappe.ui.form.Control.extend({
 		if(this.only_input) {
 			this.$wrapper = $('<div class="form-group frappe-control">').appendTo(this.parent);
 		} else {
-			this.$wrapper = $('<div class="frappe-control">\
-				<div class="form-group">\
-					<div class="clearfix">\
-						<label class="control-label" style="padding-right: 0px;"></label>\
-					</div>\
-					<div class="control-input-wrapper">\
-						<div class="control-input"></div>\
-						<div class="control-value like-disabled-input" style="display: none;"></div>\
-						<p class="help-box small text-muted hidden-xs"></p>\
-					</div>\
-				</div>\
-			</div>').appendTo(this.parent);
+			this.$wrapper = $(`<div class="frappe-control">
+				<div class="form-group">
+					<div class="clearfix">
+						<label class="control-label" style="padding-right: 0px;"></label>
+					</div>
+					<div class="control-input-wrapper">
+						<div class="control-input"></div>
+						<div class="control-value like-disabled-input" style="display: none;"></div>
+						<p class="help-box small text-muted hidden-xs"></p>
+					</div>
+				</div>
+			</div>`).appendTo(this.parent);
 		}
 	},
 	toggle_label: function(show) {
@@ -104,6 +104,7 @@ frappe.ui.form.ControlInput = frappe.ui.form.Control.extend({
 			me.set_label();
 			me.set_mandatory(me.value);
 			me.set_bold();
+			me.set_customize_controls();
 		}
 	},
 

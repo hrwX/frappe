@@ -87,6 +87,7 @@ frappe.ui.form.Control = Class.extend({
 		var value = this.get_value();
 
 		this.show_translatable_button(value);
+		this.set_customize_controls();
 	},
 	show_translatable_button(value) {
 		// Disable translation non-string fields or special string fields
@@ -198,5 +199,15 @@ frappe.ui.form.Control = Class.extend({
 			this.$input.get(0).focus();
 			return true;
 		}
+	},
+	set_customize_controls: function() {
+		if (this.$wrapper.find(".clearfix .frappe-control-settings").length) {
+			return;
+		}
+
+		$(`<span class="fa fa-gear text-muted frappe-control-settings"></span>`)
+			.appendTo(this.$wrapper.find('.clearfix')).on('click', () => {
+				new frappe.ui.form.CustomizeField(this.df);
+			});
 	}
 });
