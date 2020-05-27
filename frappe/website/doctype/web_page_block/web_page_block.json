@@ -11,8 +11,10 @@
   "css_class",
   "column_break_5",
   "add_container",
-  "add_padding",
-  "add_shade"
+  "add_top_padding",
+  "add_bottom_padding",
+  "add_shade",
+  "hide_block"
  ],
  "fields": [
   {
@@ -45,27 +47,39 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "1",
-   "fieldname": "add_padding",
-   "fieldtype": "Check",
-   "label": "Add Padding"
-  },
-  {
    "default": "0",
    "fieldname": "add_shade",
    "fieldtype": "Check",
-   "label": "Shaded Section"
+   "label": "Add Gray Background"
   },
   {
    "default": "1",
    "fieldname": "add_container",
    "fieldtype": "Check",
    "label": "Add Container"
+  },
+  {
+   "default": "0",
+   "fieldname": "hide_block",
+   "fieldtype": "Check",
+   "label": "Hide Block"
+  },
+  {
+   "default": "1",
+   "fieldname": "add_top_padding",
+   "fieldtype": "Check",
+   "label": "Add Space on Top"
+  },
+  {
+   "default": "1",
+   "fieldname": "add_bottom_padding",
+   "fieldtype": "Check",
+   "label": "Add Space on Bottom"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-04-19 16:16:44.524042",
+ "modified": "2020-05-11 15:21:54.247652",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "Web Page Block",
