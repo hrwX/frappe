@@ -87,7 +87,6 @@ frappe.ui.form.Control = Class.extend({
 		var value = this.get_value();
 
 		this.show_translatable_button(value);
-		this.set_customize_controls();
 	},
 	show_translatable_button(value) {
 		// Disable translation non-string fields or special string fields
@@ -202,14 +201,28 @@ frappe.ui.form.Control = Class.extend({
 			return true;
 		}
 	},
-	set_customize_controls: function() {
+	customize: function() {
 		if (this.$wrapper.find(".clearfix .frappe-control-settings").length) {
 			return;
 		}
+		$(`<span class="text-muted pull-right frappe-control-sort" style="margin-bottom: 5px; padding-left: 15px;">
+				<i class="fa fa-bars"></i>
+			</span>`).appendTo(this.$wrapper.find('.clearfix'));
 
-		$(`<span class="fa fa-gear text-muted frappe-control-settings"></span>`)
+		$(`<span class="text-muted pull-right frappe-control-settings" style="margin-bottom: 5px;">
+				<i class="fa fa-gear "></i>
+			</span>`)
 			.appendTo(this.$wrapper.find('.clearfix')).on('click', () => {
-				new frappe.ui.form.CustomizeField(this.df);
+				frappe.ui.form.CustomizeField(this.df).then((df) => {
+					this.df = df;
+
+					for (let idx in this.frm.meta.fields) {
+						let field = this.frm.meta.fields[idx];
+						if (field.fieldname === df.fieldname) {
+							$.extend(field, df);
+						}
+					}
+				})
 			});
 	}
 });

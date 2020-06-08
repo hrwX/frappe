@@ -104,7 +104,6 @@ frappe.ui.form.ControlInput = frappe.ui.form.Control.extend({
 			me.set_label();
 			me.set_mandatory(me.value);
 			me.set_bold();
-			me.set_customize_controls();
 		}
 	},
 

@@ -1600,8 +1600,17 @@ frappe.ui.form.Form = class FrappeForm {
 	}
 
 	enable_customize_form() {
-		this.layout.refresh(this.doc, true);
+		this.customized_layout = [];
+		this.setup_customize();
 		this.setup_sortable();
+	}
+
+	setup_customize() {
+		this.layout.fields_list.forEach(field => {
+			this.set_df_property(field.df.fieldname, "hidden", 0);
+			field.disable && field.disable();
+			field.customize && field.customize();
+		});
 	}
 
 	setup_sortable() {
@@ -1612,7 +1621,6 @@ frappe.ui.form.Form = class FrappeForm {
 				group: "form",
 				handle: ".frappe-control",
 				fallbackOnBody: true,
-				swapThreshold: 0.65,
 				onUpdate: () => {
 
 				}
@@ -1620,9 +1628,14 @@ frappe.ui.form.Form = class FrappeForm {
 		}
 	}
 
+	enable_click_listeners() {
+		this.$wrapper.find(".frappe-control-settings").on("click", (el) => {
+
+		});
+	}
+
 	customize_field(df) {
 		// Updates meta based on the values changed for docfield
-		new frappe.ui.form.CustomizeField(df, this.meta);
 	}
 };
 

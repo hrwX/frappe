@@ -3,35 +3,25 @@
 
 frappe.provide("frappe.ui.form");
 
-frappe.ui.form.CustomizeField = class CustomizeField {
-	constructor(df, meta) {
-		this.df = df;
-		this.meta = meta;
-		console.log(this.df);
-		this.init();
-	}
-	init() {
-		frappe.model.with_doctype("Customize Form Field", () => {
-			this.customize_form_field = frappe.get_meta("Customize Form Field");
-			this.create_dialog();
-		})
-	}
-	create_dialog() {
-		let d = new frappe.ui.Dialog({
-			title: __(this.df.label),
-			fields: this.customize_form_field.fields,
-			primary_action_label: __('Save'),
-			primary_action: function() {
-				let values = d.get_values();
+frappe.ui.form.CustomizeField = function(df) {
+	return new Promise(resolve => {
+		let customize_form_field = null;
 
-				for (let i in this.meta.fields) {
-					if (this.meta.fields[i].fieldname === this.df.fieldname) {
-						$.extend(this.meta.fields[i], values);
-					}
+		frappe.model.with_doctype("Customize Form Field", () => {
+			customize_form_field = frappe.get_meta("Customize Form Field");
+		}).then(() => {
+			let dialog = new frappe.ui.Dialog({
+				title: __(df.label) || __("New Field"),
+				fields: customize_form_field.fields,
+				primary_action_label: __('Save'),
+				size: "large",
+				primary_action: function() {
+					dialog.hide();
+					resolve(dialog.get_values());
 				}
-			}
+			});
+			dialog.set_values(df);
+			dialog.show();
 		})
-		d.set_values(this.df);
-		d.show();
-	}
+	})
 }

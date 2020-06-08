@@ -212,10 +212,9 @@ frappe.ui.form.Layout = Class.extend({
 		}
 	},
 
-	refresh: function(doc, customize=false) {
+	refresh: function(doc) {
 		var me = this;
 		if(doc) this.doc = doc;
-		this.customize = customize;
 
 		if (this.frm) {
 			this.wrapper.find(".empty-form-alert").remove();
@@ -237,10 +236,6 @@ frappe.ui.form.Layout = Class.extend({
 		// collapse sections
 		if(this.frm) {
 			this.refresh_section_collapse();
-		}
-
-		if (this.customize) {
-			this.enable_form_customization()
 		}
 	},
 
@@ -570,14 +565,14 @@ frappe.ui.form.Layout = Class.extend({
 		return out;
 	},
 
-	enable_form_customization() {
-		this.fields_list.forEach(field => {
-			this.frm.set_df_property(field.df.fieldname, "hidden", 0);
-			field.disable && field.disable();
-			field.collapse && field.collapse(false);
-			field.frappe_control_droparea && field.frappe_control_droparea();
-		})
-	}
+	// enable_form_customization() {
+	// 	this.fields_list.forEach(field => {
+	// 		this.frm.set_df_property(field.df.fieldname, "hidden", 0);
+	// 		field.disable && field.disable();
+	// 		field.collapse && field.collapse(false);
+	// 		field.frappe_control_droparea && field.frappe_control_droparea();
+	// 	})
+	// }
 });
 
 frappe.ui.form.Section = Class.extend({
@@ -634,12 +629,24 @@ frappe.ui.form.Section = Class.extend({
 	make_head: function() {
 		var me = this;
 		if(!this.df.collapsible) {
-			$('<div class="col-sm-12"><h6 class="form-section-heading uppercase">'
-				+ __(this.df.label) + '</h6></div>')
-				.appendTo(this.wrapper);
+			$(`<div class="section-head">
+					<a class="h6 form-section-heading uppercase">
+						${__(this.df.label)}
+					</a>
+					<button class="btn btn-default btn-add-field pull-right btn-xs hide">
+						<i class="fa fa-gear"></i>
+					</button
+				</div>`).appendTo(this.wrapper);
 		} else {
-			this.head = $('<div class="section-head"><a class="h6 uppercase">'
-				+__(this.df.label)+'</a><span class="octicon octicon-chevron-down collapse-indicator"></span></div>').appendTo(this.wrapper);
+			this.head = $(`<div class="section-head">
+					<a class="h6 uppercase">
+						${__(this.df.label)}
+					</a>
+					<span class="octicon octicon-chevron-down collapse-indicator"></span>
+					<button class="btn btn-default btn-add-field pull-right btn-xs hide">
+						<i class="fa fa-gear"></i>
+					</button
+				</div>`).appendTo(this.wrapper);
 
 			// show / hide based on status
 			this.collapse_link = this.head.on("click", function() {
@@ -704,6 +711,13 @@ frappe.ui.form.Section = Class.extend({
 			}
 		}
 		return missing_mandatory;
+	},
+
+	customize: function() {
+		if (this.is_collapsed()) {
+			this.collapse(false);
+		}
+		this.wrapper.find(".btn-add-field").removeClass("hide");
 	}
 });
 
@@ -745,7 +759,7 @@ frappe.ui.form.Column = Class.extend({
 		this.section.wrapper.find(".frappe-control-customize").removeClass();
 		this.section.wrapper.find(".frappe-form-droparea").removeClass();
 	},
-	frappe_control_droparea: function() {
+	customize: function() {
 		this.section.wrapper.find(".form-column").addClass("frappe-control-customize");
 		this.section.wrapper.find(".frappe-form").addClass("frappe-form-droparea");
 	}
