@@ -48,6 +48,7 @@ def enqueue_create_notification(users, doc):
 
 	if isinstance(users, frappe.string_types):
 		users = [user.strip() for user in users.split(',') if user.strip()]
+	users = list(set(users))
 
 	frappe.enqueue(
 		'frappe.desk.doctype.notification_log.notification_log.make_notification_logs',
@@ -58,6 +59,7 @@ def enqueue_create_notification(users, doc):
 
 def make_notification_logs(doc, users):
 	from frappe.social.doctype.energy_point_settings.energy_point_settings import is_energy_point_enabled
+
 	for user in users:
 		if frappe.db.exists('User', user):
 			if is_notifications_enabled(user):
@@ -68,7 +70,7 @@ def make_notification_logs(doc, users):
 				_doc.update(doc)
 				_doc.for_user = user
 				_doc.subject = _doc.subject.replace('<div>', '').replace('</div>', '')
-				if _doc.for_user != _doc.from_user or doc.type == 'Energy Point':
+				if _doc.for_user != _doc.from_user or doc.type == 'Energy Point' or doc.type == 'Alert':
 					_doc.insert(ignore_permissions=True)
 
 def send_notification_email(doc):
@@ -101,7 +103,7 @@ def get_email_header(doc):
 	return {
 		'Default': _('New Notification'),
 		'Mention': _('New Mention'),
-		'Assignment': _('New Assignment'),
+		'Assignment': _('Assignment Update'),
 		'Share': _('New Document Shared'),
 		'Energy Point': _('Energy Point Update'),
 	}[doc.type or 'Default']
