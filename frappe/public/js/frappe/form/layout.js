@@ -1,4 +1,5 @@
 import '../class';
+import './customize_form';
 
 frappe.ui.form.Layout = Class.extend({
 	init: function(opts) {
@@ -644,8 +645,11 @@ frappe.ui.form.Section = Class.extend({
 					</a>
 					<span class="octicon octicon-chevron-down collapse-indicator"></span>
 					<button class="btn btn-default btn-add-field pull-right btn-xs hide">
+						<i class="fa fa-plus"></i>
+					</button>
+					<button class="btn btn-default btn-setting pull-right btn-xs hide">
 						<i class="fa fa-gear"></i>
-					</button
+					</button>
 				</div>`).appendTo(this.wrapper);
 
 			// show / hide based on status
@@ -714,10 +718,32 @@ frappe.ui.form.Section = Class.extend({
 	},
 
 	customize: function() {
+		if (this.df.fieldname === "_form_dashboard") {
+			this.collapse(true);
+			return;
+		}
+
 		if (this.is_collapsed()) {
 			this.collapse(false);
 		}
-		this.wrapper.find(".btn-add-field").removeClass("hide");
+
+		if (this.head && this.body) {
+			this.head.on("click", () => {});
+		}
+
+		this.wrapper.find(".btn-add-field")
+			.removeClass("hide")
+			.on("click", () => {
+				frappe.ui.form.CustomizeField()
+			});
+			btn-setting
+
+		this.wrapper.find(".btn-setting")
+			.removeClass("hide")
+			.on("click", () => {
+				frappe.ui.form.CustomizeField()
+			});
+		btn-setting
 	}
 });
 

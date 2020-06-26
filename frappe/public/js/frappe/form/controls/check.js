@@ -1,3 +1,5 @@
+frappe.provide('frappe.ui.form');
+
 frappe.ui.form.ControlCheck = frappe.ui.form.ControlData.extend({
 	input_type: "checkbox",
 	make_wrapper: function() {
@@ -35,5 +37,29 @@ frappe.ui.form.ControlCheck = frappe.ui.form.ControlData.extend({
 		this.last_value = value;
 		this.set_mandatory(value);
 		this.set_disp_area(value);
+	},
+	customize: function() {
+		if (this.$wrapper.find(".checkbox .frappe-control-settings").length) {
+			return;
+		}
+
+		$(`<span class="text-muted pull-right frappe-control-settings" style="margin-bottom: 5px;">
+				<i class="fa fa-gear "></i>
+			</span>`).insertAfter(this.$wrapper.find('.checkbox label')).on('click', () => {
+				frappe.ui.form.CustomizeField(this.df).then((df) => {
+					this.df = df;
+
+					for (let idx in this.frm.meta.fields) {
+						let field = this.frm.meta.fields[idx];
+						if (field.fieldname === df.fieldname) {
+							$.extend(field, df);
+						}
+					}
+				})
+			});
+
+		$(`<span class="text-muted pull-right frappe-control-sort" style="margin-bottom: 5px; padding-left: 15px;">
+				<i class="fa fa-bars"></i>
+			</span>`).insertAfter(this.$wrapper.find('.checkbox label'));
 	}
 });

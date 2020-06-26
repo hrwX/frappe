@@ -6,6 +6,7 @@ frappe.provide("frappe.ui.form");
 frappe.ui.form.CustomizeField = function(df) {
 	return new Promise(resolve => {
 		let customize_form_field = null;
+		let df = df || {};
 
 		frappe.model.with_doctype("Customize Form Field", () => {
 			customize_form_field = frappe.get_meta("Customize Form Field");

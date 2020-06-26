@@ -1617,8 +1617,8 @@ frappe.ui.form.Form = class FrappeForm {
 	setup_customize() {
 		this.layout.fields_list.forEach(field => {
 			this.set_df_property(field.df.fieldname, "hidden", 0);
-			field.disable && field.disable();
 			field.customize && field.customize();
+			field.disable && field.disable();
 		});
 	}
 
