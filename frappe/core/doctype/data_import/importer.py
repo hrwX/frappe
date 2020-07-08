@@ -973,9 +973,7 @@ class Column:
 		if self.df.fieldtype == "Link":
 			# find all values that dont exist
 			values = list(set([cstr(v) for v in self.column_values[1:] if v]))
-			exists = [
-				d.name for d in frappe.db.get_all(self.df.options, filters={"name": ("in", values)})
-			]
+			exists = [d.name for d in frappe.db.get_all(self.df.options, filters={'name': ('in', values)})]
 			not_exists = list(set(values) - set(exists))
 			if not_exists:
 				missing_values = ", ".join(not_exists)
@@ -1112,7 +1110,7 @@ def build_fields_dict_for_column_matching(parent_doctype):
 		# other fields
 		fields = get_standard_fields(doctype) + frappe.get_meta(doctype).fields
 		for df in fields:
-			label = (df.label or "").strip()
+			label = (df.label or '').strip()
 			fieldtype = df.fieldtype or "Data"
 			parent = df.parent or parent_doctype
 			if fieldtype not in no_value_fields:
