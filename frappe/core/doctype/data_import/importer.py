@@ -992,34 +992,12 @@ class Column:
 			# guess date format
 			self.date_format = self.guess_date_format_for_column()
 			if not self.date_format:
-				self.date_format = "%Y-%m-%d"
-				self.warnings.append(
-					{
-						"col": self.column_number,
-						"message": _(
-							"Date format could not be determined from the values in"
-							" this column. Defaulting to yyyy-mm-dd."
-						),
-						"type": "info",
-					}
-				)
-		elif self.df.fieldtype == "Select":
-			options = get_select_options(self.df)
-			if options:
-				values = list(set([cstr(v) for v in self.column_values[1:] if v]))
-				invalid = list(set(values) - set(options))
-				if invalid:
-					valid_values = ", ".join([frappe.bold(o) for o in options])
-					invalid_values = ", ".join([frappe.bold(i) for i in invalid])
-					self.warnings.append(
-						{
-							"col": self.column_number,
-							"message": (
-								"The following values are invalid: {0}. Values must be"
-								" one of {1}".format(invalid_values, valid_values)
-							),
-						}
-					)
+				self.date_format = '%Y-%m-%d'
+				self.warnings.append({
+					'col': self.column_number,
+					'message': _("Date format could not determined from the values in this column. Defaulting to yyyy-mm-dd."),
+					'type': 'info'
+				})
 
 	def as_dict(self):
 		d = frappe._dict()
