@@ -1282,6 +1282,9 @@ def guess_date_format(date_string):
 
 	# date_string doesnt look like date, it can have a time part too
 	# split the date string into date and time parts
+	_date = None
+	_time = None
+
 	if " " in date_string:
 		date_str, time_str = date_string.split(" ", 1)
 
@@ -1290,9 +1293,3 @@ def guess_date_format(date_string):
 
 		if date_format and time_format:
 			return (date_format + ' ' + time_format).strip()
-
-def validate_json_string(string):
-	try:
-		json.loads(string)
-	except (TypeError, ValueError):
-		raise frappe.ValidationError
