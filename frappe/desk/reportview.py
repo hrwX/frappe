@@ -26,9 +26,9 @@ def get():
 def execute(doctype, *args, **kwargs):
 	return DatabaseQuery(doctype).execute(*args, **kwargs)
 
-def get_form_params():
+def get_form_params(args=None):
 	"""Stringify GET request parameters."""
-	data = frappe._dict(frappe.local.form_dict)
+	data = frappe._dict(args or frappe.local.form_dict)
 
 	is_report = data.get('view') == 'Report'
 
@@ -413,3 +413,26 @@ def get_filters_cond(doctype, filters, conditions, ignore_permissions=None, with
 	else:
 		cond = ''
 	return cond
+
+@frappe.whitelist()
+@frappe.read_only()
+def get_hybrid_list(params):
+	params = json.loads(params)
+
+	parent_args = params.get("parent")
+	child_args = params.get("child")
+
+	args = get_form_params(parent_args)
+	data = compress(execute(**args), args=args)
+
+	idx = data.get("keys").index("name")
+	data.get("keys").append("nested")
+
+	child_fields = child_args.get("fields")
+
+	for value in data.get("values"):
+		filters = {}
+		filters[child_args.get("fieldname")] = value[idx]
+		value.append(frappe.get_all(child_args.get("doctype"), filters=filters, fields=child_fields, with_comment_count=True))
+
+	return data

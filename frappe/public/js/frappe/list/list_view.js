@@ -304,7 +304,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 				}))
 		);
 
-		if (this.list_view_settings.fields) {
+		if (this.list_view_settings && this.list_view_settings.fields) {
 			this.columns = this.reorder_listview_fields();
 		}
 
@@ -320,7 +320,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 			total_fields = 8;
 		}
 
-		this.columns = this.columns.slice(0, this.list_view_settings.total_fields || total_fields);
+		this.columns = this.columns.slice(0, this.list_view_settings && this.list_view_settings.total_fields || total_fields);
 	}
 
 	reorder_listview_fields() {
@@ -802,7 +802,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 			<input class="level-item list-row-checkbox hidden-xs" type="checkbox" data-name="${escape(doc.name)}">
 			<span class="level-item" style="margin-bottom: 1px;">
 				<i class="octicon octicon-heart like-action ${heart_class}"
-					data-name="${doc.name}" data-doctype="${this.doctype}"
+					data-name="${doc.name}" data-doctype="${doc.doctype}"
 					data-liked-by="${encodeURI(doc._liked_by) || '[]'}"
 				>
 				</i>
@@ -811,7 +811,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 				</span>
 			</span>
 			<span class="level-item ${seen} ellipsis" title="${escaped_subject}">
-				<a class="ellipsis" href="${this.get_form_link(doc)}" title="${escaped_subject}" data-doctype="${this.doctype}" data-name="${doc.name}">
+				<a class="ellipsis" href="${this.get_form_link(doc)}" title="${escaped_subject}" data-doctype="${doc.doctype}" data-name="${doc.name}">
 				${subject}
 				</a>
 			</span>

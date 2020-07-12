@@ -61,6 +61,10 @@ frappe.views.ListSidebar = class ListSidebar {
 			show_list_link = true;
 		}
 
+		if (frappe.listview_settings[this.doctype].is_hybrid) {
+			this.sidebar.find('.list-link[data-view="Hybrid"]').removeClass("hide");
+		}
+
 		if (frappe.treeview_settings[this.doctype] || frappe.get_meta(this.doctype).is_tree) {
 			this.sidebar.find(".tree-link").removeClass("hide");
 		}
@@ -210,7 +214,7 @@ frappe.views.ListSidebar = class ListSidebar {
 			let email_account = (account.email_id == "All Accounts") ? "All Accounts" : account.email_account;
 			let route = ["List", "Communication", "Inbox", email_account].join('/');
 			let display_name = ["All Accounts", "Sent Mail", "Spam", "Trash"].includes(account.email_id) ? __(account.email_id) : account.email_id;
-			
+
 			if (!divider) {
 				this.get_divider().appendTo($dropdown);
 				divider = true;
