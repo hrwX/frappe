@@ -630,7 +630,7 @@ class Row:
 	def validate_value(self, value, col):
 		df = col.df
 		if df.fieldtype == "Select":
-			select_options = [d for d in (df.options or '').split('\n') if d]
+			select_options = get_select_options(df)
 			if select_options and value not in select_options:
 				options_string = ", ".join([frappe.bold(d) for d in select_options])
 				msg = _("Value must be one of {0}").format(options_string)
@@ -696,7 +696,7 @@ class Row:
 		return value
 
 	def get_date(self, value, column):
-		if isinstance(value, datetime):
+		if isinstance(value, (datetime, date)):
 			return value
 
 		date_format = column.date_format
@@ -967,13 +967,12 @@ class Column:
 		if not self.df:
 			return
 
-		if self.skip_import:
-			return
-
 		if self.df.fieldtype == "Link":
 			# find all values that dont exist
 			values = list(set([cstr(v) for v in self.column_values[1:] if v]))
-			exists = [d.name for d in frappe.db.get_all(self.df.options, filters={'name': ('in', values)})]
+			exists = [
+				d.name for d in frappe.db.get_all(self.df.options, filters={"name": ("in", values)})
+			]
 			not_exists = list(set(values) - set(exists))
 			if not_exists:
 				missing_values = ", ".join(not_exists)
@@ -992,12 +991,34 @@ class Column:
 			# guess date format
 			self.date_format = self.guess_date_format_for_column()
 			if not self.date_format:
-				self.date_format = '%Y-%m-%d'
-				self.warnings.append({
-					'col': self.column_number,
-					'message': _("Date format could not determined from the values in this column. Defaulting to yyyy-mm-dd."),
-					'type': 'info'
-				})
+				self.date_format = "%Y-%m-%d"
+				self.warnings.append(
+					{
+						"col": self.column_number,
+						"message": _(
+							"Date format could not be determined from the values in"
+							" this column. Defaulting to yyyy-mm-dd."
+						),
+						"type": "info",
+					}
+				)
+		elif self.df.fieldtype == "Select":
+			options = get_select_options(self.df)
+			if options:
+				values = list(set([cstr(v) for v in self.column_values[1:] if v]))
+				invalid = list(set(values) - set(options))
+				if invalid:
+					valid_values = ", ".join([frappe.bold(o) for o in options])
+					invalid_values = ", ".join([frappe.bold(i) for i in invalid])
+					self.warnings.append(
+						{
+							"col": self.column_number,
+							"message": (
+								"The following values are invalid: {0}. Values must be"
+								" one of {1}".format(invalid_values, valid_values)
+							),
+						}
+					)
 
 	def as_dict(self):
 		d = frappe._dict()
@@ -1088,7 +1109,7 @@ def build_fields_dict_for_column_matching(parent_doctype):
 		# other fields
 		fields = get_standard_fields(doctype) + frappe.get_meta(doctype).fields
 		for df in fields:
-			label = (df.label or '').strip()
+			label = (df.label or "").strip()
 			fieldtype = df.fieldtype or "Data"
 			parent = df.parent or parent_doctype
 			if fieldtype not in no_value_fields:
