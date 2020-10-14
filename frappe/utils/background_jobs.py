@@ -202,6 +202,7 @@ def get_queue_list(queue_list=None):
 
 def get_queue(queue, is_async=True):
 	'''Returns a Queue object tied to a redis connection'''
+	queue = frappe.conf.bench_hash + "-" + queue
 	validate_queue(queue)
 
 	kwargs = {
@@ -215,7 +216,7 @@ def validate_queue(queue, default_queue_list=None):
 	if not default_queue_list:
 		default_queue_list = list(queue_timeout)
 
-	if queue not in default_queue_list:
+	if queue.split("-")[-1] not in default_queue_list:
 		frappe.throw(_("Queue should be one of {0}").format(', '.join(default_queue_list)))
 
 def get_redis_conn():
