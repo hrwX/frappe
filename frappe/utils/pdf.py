@@ -14,7 +14,8 @@ from PyPDF2 import PdfFileReader, PdfFileWriter
 
 import frappe
 from frappe import _
-from frappe.utils import get_wkhtmltopdf_version, scrub_urls
+from frappe.utils import scrub_urls
+import subprocess
 
 PDF_CONTENT_ERRORS = ["ContentNotFoundError", "ContentOperationNotPermittedError",
 	"UnknownContentError", "RemoteHostClosedError"]
@@ -199,3 +200,16 @@ def toggle_visible_pdf(soup):
 	for tag in soup.find_all(attrs={"class": "hidden-pdf"}):
 		# remove tag from html
 		tag.extract()
+
+def get_wkhtmltopdf_version():
+	wkhtmltopdf_version = frappe.cache().hget("wkhtmltopdf_version", None)
+
+	if not wkhtmltopdf_version:
+		try:
+			res = subprocess.check_output(["wkhtmltopdf", "--version"])
+			wkhtmltopdf_version = res.decode('utf-8').split(" ")[1]
+			frappe.cache().hset("wkhtmltopdf_version", None, wkhtmltopdf_version)
+		except Exception:
+			pass
+
+	return (wkhtmltopdf_version or '0')
