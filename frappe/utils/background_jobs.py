@@ -202,9 +202,7 @@ def get_queue_list(queue_list=None):
 
 def get_queue(queue, is_async=True):
 	'''Returns a Queue object tied to a redis connection'''
-	bench_hash = frappe.conf.bench_hash if not frappe.flags.in_test else "Travis"
-
-	queue = bench_hash + "-" + queue
+	queue = frappe.conf.bench_hash + "-" + queue
 	validate_queue(queue)
 
 	kwargs = {

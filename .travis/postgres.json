@@ -11,5 +11,6 @@
     "root_login": "postgres",
     "root_password": "travis",
     "host_name": "http://test_site:8000",
-    "server_script_enabled": true
+    "server_script_enabled": true,
+    "bench_hash": "Travis"
 }
