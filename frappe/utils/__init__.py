@@ -679,3 +679,10 @@ def create_batch(iterable, batch_size):
 	total_count = len(iterable)
 	for i in range(0, total_count, batch_size):
 		yield iterable[i:min(i + batch_size, total_count)]
+
+def get_source_value(source, key):
+	'''Get value from source (object or dict) based on key'''
+	if isinstance(source, dict):
+		return source.get(key)
+	else:
+		return getattr(source, key)

@@ -1116,3 +1116,8 @@ def guess_date_format(date_string):
 
 		if date_format and time_format:
 			return (date_format + ' ' + time_format).strip()
+
+def get_date_str(date_obj):
+	if isinstance(date_obj, string_types):
+		date_obj = get_datetime(date_obj)
+	return date_obj.strftime(DATE_FORMAT)
