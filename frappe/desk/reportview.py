@@ -26,7 +26,7 @@ def get():
 def execute(doctype, *args, **kwargs):
 	return DatabaseQuery(doctype).execute(*args, **kwargs)
 
-def get_form_params(params):
+def get_form_params(params=None):
 	"""Stringify GET request parameters."""
 	data = frappe._dict(params or frappe.local.form_dict)
 
