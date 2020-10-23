@@ -1,18 +1,27 @@
 import Quill from 'quill';
+import ImageResize from 'quill-image-resize';
+import QuillBetterTable from 'quill-better-table';
 
+Quill.register('modules/imageResize', ImageResize);
 const CodeBlockContainer = Quill.import('formats/code-block-container');
 CodeBlockContainer.tagName = 'PRE';
 Quill.register(CodeBlockContainer, true);
 
+
+Quill.register({
+	'modules/better-table': QuillBetterTable
+}, true)
+
+
 // table
-const Table = Quill.import('formats/table-container');
-const superCreate = Table.create.bind(Table);
-Table.create = (value) => {
-	const node = superCreate(value);
-	node.classList.add('table');
-	node.classList.add('table-bordered');
-	return node;
-};
+// const Table = Quill.import('formats/table-container');
+// const superCreate = Table.create.bind(Table);
+// Table.create = (value) => {
+// 	const node = superCreate(value);
+// 	node.classList.add('table');
+// 	node.classList.add('table-bordered');
+// 	return node;
+// };
 
 Quill.register(Table, true);
 
@@ -50,10 +59,25 @@ Quill.register(FontStyle, true);
 Quill.register(AlignStyle, true);
 Quill.register(DirectionStyle, true);
 
+// replace font tag with span
+const Inline = Quill.import('blots/inline');
+
+class CustomColor extends Inline {
+	constructor(domNode, value) {
+		super(domNode, value);
+		this.domNode.style.color = this.domNode.color;
+		domNode.outerHTML = this.domNode.outerHTML.replace(/<font/g, '<span').replace(/<\/font>/g, '</span>');
+	}
+}
+
+CustomColor.blotName = "customColor";
+CustomColor.tagName = "font";
+
+Quill.register(CustomColor, true);
+
 frappe.ui.form.ControlTextEditor = frappe.ui.form.ControlCode.extend({
 	make_wrapper() {
 		this._super();
-		this.$wrapper.find(".like-disabled-input").addClass('ql-editor');
 	},
 
 	make_input() {
@@ -130,7 +154,8 @@ frappe.ui.form.ControlTextEditor = frappe.ui.form.ControlCode.extend({
 		return {
 			modules: {
 				toolbar: this.get_toolbar_options(),
-				table: true
+				table: true,
+				imageResize: {}
 			},
 			theme: 'snow'
 		};
@@ -185,6 +210,15 @@ frappe.ui.form.ControlTextEditor = frappe.ui.form.ControlCode.extend({
 		let value = this.quill ? this.quill.root.innerHTML : '';
 		// hack to retain space sequence.
 		value = value.replace(/(\s)(\s)/g, ' &nbsp;');
+
+		try {
+			if (!$(value).find('.ql-editor').length) {
+				value = `<div class="ql-editor read-mode">${value}</div>`;
+			}
+		} catch(e) {
+			value = `<div class="ql-editor read-mode">${value}</div>`;
+		}
+
 		return value;
 	},
 

@@ -35,6 +35,7 @@
     "moment-timezone": "^0.5.21",
     "quagga": "^0.12.1",
     "quill": "2.0.0-dev.4",
+    "quill-better-table": "^1.2.10",
     "qz-tray": "^2.0.8",
     "redis": "^2.8.0",
     "showdown": "^1.9.1",

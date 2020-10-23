@@ -78,7 +78,7 @@
 	}
 }
 
-.ql-editor .mention {
+.ql-editor:not(.read-mode) .mention {
 	height: auto;
 	width: auto;
 	border-radius: 10px;
@@ -134,6 +134,6 @@
 	margin-bottom: 0px;
 }
 
-.ql-editor ol {
-	padding-left: 2.5em;
+.ql-editor.read-mode {
+	padding: 0;
 }
