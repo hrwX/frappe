@@ -12,7 +12,7 @@ frappe.ui.form.ControlDatetime = frappe.ui.form.ControlDate.extend({
 		return frappe.datetime.now_datetime(true);
 	},
 	set_description: function() {
-		this.df.description = frappe.user_defaults.time_zone;
+		this.df.description = frappe.user_defaults.time_zone || frappe.sys_defaults.time_zone;
 		this._super();
 	},
 	set_formatted_input(value) {
