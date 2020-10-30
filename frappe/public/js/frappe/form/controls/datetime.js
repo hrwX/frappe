@@ -12,15 +12,39 @@ frappe.ui.form.ControlDatetime = frappe.ui.form.ControlDate.extend({
 		return frappe.datetime.now_datetime(true);
 	},
 	set_description: function() {
-		const { description } = this.df;
-		const { time_zone } = frappe.sys_defaults;
-		if (!frappe.datetime.is_timezone_same()) {
-			if (!description) {
-				this.df.description = time_zone;
-			} else if (!description.includes(time_zone)) {
-				this.df.description += '<br>' + time_zone;
+		this.df.description = frappe.user_defaults.time_zone;
+		this._super();
+	},
+	set_formatted_input(value) {
+		value = frappe.datetime.convert_to_user_tz(value, true);
+		this.$input && this.$input.val(this.format_for_input(value));
+		this.format_for_datepicker(value);
+	},
+	format_for_datepicker: function(value) {
+		if (!this.datepicker) return;
+		if(!value) {
+			this.datepicker.clear();
+			return;
+		}
+
+		let should_refresh = this.last_value && this.last_value !== value;
+
+		if (!should_refresh) {
+			if(this.datepicker.selectedDates.length > 0) {
+				// if date is selected but different from value, refresh
+				const selected_date =
+					moment(this.datepicker.selectedDates[0])
+						.format(this.date_format);
+
+				should_refresh = selected_date !== value;
+			} else {
+				// if datepicker has no selected date, refresh
+				should_refresh = true;
 			}
 		}
-		this._super();
+
+		if(should_refresh) {
+			this.datepicker.selectDate(moment(value).format(frappe.defaultDatetimeFormat || "YYYY-MM-DD HH:mm:ss"));
+		}
 	}
 });
