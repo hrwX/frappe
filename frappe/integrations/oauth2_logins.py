@@ -37,6 +37,11 @@ def login_via_fairlogin(code, state):
 
 @frappe.whitelist(allow_guest=True)
 def get_login_url(redirect_to=None, social_login_key_name="bloomstack"):
+	if not redirect_to:
+		redirect_to = frappe.utils.get_url() + "/api/method/frappe.integrations.oauth2.authorize?client_id=" + \
+			frappe.get_cached_value("OAuth Client", "Bloomstack", "client_id") +"&26response_type=code&scope=openid \
+			&prompt=none&redirect_uri=https://companion.bloomstack.us/auth/getFrappetoken"
+
 	redirect_to = redirect_to.replace("&amp;", "&")
 	return get_oauth2_authorize_url(social_login_key_name, redirect_to)
 
