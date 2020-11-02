@@ -43,7 +43,8 @@ def get_login_url(redirect_to=None, social_login_key_name="bloomstack"):
 		redirect_to = "{0}/api/method/frappe.integrations.oauth2.authorize?client_id={1}&response_type=code&scope=openid&prompt=none& \
 			redirect_uri={2}".format(frappe.utils.get_url(), client.get("client_id"), client.get("default_redirect_uri"))
 
-	redirect_to = redirect_to.replace("&amp;", "&")
+	if redirect_to:
+		redirect_to = redirect_to.replace("&amp;", "&")
 	return get_oauth2_authorize_url(social_login_key_name, redirect_to)
 
 @frappe.whitelist(allow_guest=True)
