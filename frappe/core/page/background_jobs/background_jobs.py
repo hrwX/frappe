@@ -9,7 +9,10 @@ from frappe.utils.background_jobs import get_redis_conn
 from frappe.utils import format_datetime, cint, convert_utc_to_user_timezone
 from frappe.utils.scheduler import is_scheduler_inactive
 from frappe import _
+import hashlib
 
+queue_type = ['background', 'long', 'default', 'short']
+bench_hash = hashlib.md5(frappe.utils.get_bench_path().encode("utf-8")).hexdigest()
 colors = {
 	'queued': 'orange',
 	'failed': 'red',
@@ -20,8 +23,15 @@ colors = {
 @frappe.whitelist()
 def get_info(show_failed=False):
 	conn = get_redis_conn()
-	queues = Queue.all(conn)
-	workers = Worker.all(conn)
+
+	queues = []
+	for queue in queue_type:
+		queues.append(Queue(bench_hash + "-" + queue, connection=conn))
+
+	workers = []
+	for queue in queues:
+		workers.extend(Worker.all(queue=queue))
+
 	jobs = []
 
 	def add_job(j, name):

@@ -173,13 +173,14 @@ def scheduled_backup(older_than=6, ignore_files=False, backup_path_db=None, back
 
 def new_backup(older_than=6, ignore_files=False, backup_path_db=None, backup_path_files=None, backup_path_private_files=None, force=False, verbose=False):
 	delete_temp_backups(older_than = frappe.conf.keep_backups_for_hours or 24)
-	odb = BackupGenerator(frappe.conf.db_name, frappe.conf.db_name,\
-						  frappe.conf.db_password,
-						  backup_path_db=backup_path_db, backup_path_files=backup_path_files,
-						  backup_path_private_files=backup_path_private_files,
-						  db_host = frappe.db.host,
-						  db_port = frappe.db.port,
-						  verbose = verbose)
+	odb = BackupGenerator(db_name=frappe.conf.db_name,\
+							user=frappe.local.conf.replica_db_name if frappe.local.conf.different_credentials_for_replica else frappe.conf.db_name,
+							password=frappe.local.conf.replica_db_password if frappe.local.conf.different_credentials_for_replica else frappe.conf.db_password,
+							backup_path_db=backup_path_db, backup_path_files=backup_path_files,
+							backup_path_private_files=backup_path_private_files,
+							db_host = frappe.local.conf.replica_host if frappe.conf.read_from_replica else frappe.db.host,
+							db_port = frappe.db.port,
+							verbose = verbose)
 	odb.get_backup(older_than, ignore_files, force=force)
 	return odb
 
