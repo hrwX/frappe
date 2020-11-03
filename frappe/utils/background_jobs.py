@@ -10,6 +10,7 @@ from frappe import _
 from six import string_types
 from uuid import uuid4
 import frappe.monitor
+import hashlib
 
 # imports - third-party imports
 
@@ -22,6 +23,8 @@ queue_timeout = {
 }
 
 redis_connection = None
+
+bench_hash = hashlib.md5(frappe.utils.get_bench_path().encode("utf-8")).hexdigest()
 
 def enqueue(method, queue='default', timeout=None, event=None,
 	is_async=True, job_name=None, now=False, enqueue_after_commit=False, **kwargs):
@@ -187,10 +190,11 @@ def get_jobs(site=None, queue=None, key='method'):
 
 def get_queue_list(queue_list=None):
 	'''Defines possible queues. Also wraps a given queue in a list after validating.'''
-	default_queue_list = list(queue_timeout)
+	default_queue_list = [bench_hash + "-" + queue for queue in list(queue_timeout)]
+
 	if queue_list:
 		if isinstance(queue_list, string_types):
-			queue_list = [queue_list]
+			queue_list = [bench_hash + "-" + queue for queue in [queue_list]]
 
 		for queue in queue_list:
 			validate_queue(queue, default_queue_list)
@@ -202,6 +206,9 @@ def get_queue_list(queue_list=None):
 
 def get_queue(queue, is_async=True):
 	'''Returns a Queue object tied to a redis connection'''
+	if not bench_hash in queue:
+		queue = bench_hash + "-" + queue
+
 	validate_queue(queue)
 
 	kwargs = {
@@ -213,10 +220,10 @@ def get_queue(queue, is_async=True):
 
 def validate_queue(queue, default_queue_list=None):
 	if not default_queue_list:
-		default_queue_list = list(queue_timeout)
+		default_queue_list = [bench_hash + "-" + queue for queue in list(queue_timeout)]
 
 	if queue not in default_queue_list:
-		frappe.throw(_("Queue should be one of {0}").format(', '.join(default_queue_list)))
+		frappe.throw(_("{0} Queue should be one of {1}").format(queue, ', '.join(default_queue_list)))
 
 def get_redis_conn():
 	if not hasattr(frappe.local, 'conf'):
