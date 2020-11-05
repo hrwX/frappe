@@ -25,8 +25,8 @@
 </head>
 <body>
 	<div class="centered splash" style="width: 100px; height: 100px;">
-        <img src="{{ splash_image or "/assets/frappe/images/frappe-framework-logo.png" }}">
-    </div>
+		<img src="{{ splash_image or "/assets/frappe/images/frappe-framework-logo.png" }}">
+	</div>
 	<div class="main-section">
 		<header></header>
 		<div id="body_div"></div>
@@ -52,8 +52,12 @@
 	{% for include in include_js %}
 	<script type="text/javascript" src="{{ include }}?ver={{ build_version }}"></script>
 	{% endfor %}
-    {% include "templates/includes/app_analytics/google_analytics.html" %}
-    {% include "templates/includes/app_analytics/mixpanel_analytics.html" %}
+	{% include "templates/includes/app_analytics/google_analytics.html" %}
+	{% include "templates/includes/app_analytics/mixpanel_analytics.html" %}
+
+	{% if desk_include_js %}
+		<script>{{ desk_include_js }}</script>
+	{% endif %}
 
 	{% for sound in (sounds or []) %}
 	<audio preload="auto" id="sound-{{ sound.name }}" volume={{ sound.volume or 1 }}>

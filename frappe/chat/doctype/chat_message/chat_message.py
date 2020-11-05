@@ -126,6 +126,7 @@ def get_new_chat_message(user, room, content, type = "Content"):
 		mentions  = json.loads(mess.mentions),
 		creation  = mess.creation,
 		seen      = json.loads(mess._seen) if mess._seen else [ ],
+		type      = mess.type
 	)
 
 	return resp
@@ -148,8 +149,8 @@ def seen(message, user = None):
 		mess.add_seen(user)
 		mess.load_from_db()
 		room = mess.room
-		resp = dict(message = message, data = dict(seen = json.loads(mess._seen) if mess._seen else []))
-
+		seen = dict.fromkeys(json.loads(mess._seen)) if mess._seen else []
+		resp = dict(message = message, data = {"seen": list(seen.keys())})
 		frappe.publish_realtime('frappe.chat.message:update', resp, room = room, after_commit = True)
 
 def history(room, fields = None, limit = 10, start = None, end = None):

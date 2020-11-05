@@ -99,7 +99,8 @@ def get_list_context(context=None):
 		hide_filters = True,
 		children = get_children(),
 		# show_search = True,
-		title = _('Blog')
+		title = _('Blog'),
+		result_heading_template = frappe.get_hooks('blogs_result_heading_template') or ''
 	)
 
 	category = sanitize_html(frappe.local.form_dict.blog_category or frappe.local.form_dict.category)

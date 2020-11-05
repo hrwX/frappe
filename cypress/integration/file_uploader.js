@@ -20,10 +20,14 @@ context('FileUploader', () => {
 		open_upload_dialog();
 
 		cy.fixture('example.json').then(fileContent => {
-			cy.get_open_dialog().find('.file-upload-area').upload(
-				{ fileContent, fileName: 'example.json', mimeType: 'application/json' },
-				{ subjectType: 'drag-n-drop' },
-			);
+			cy.get_open_dialog().find('.file-upload-area').upload({
+				fileContent,
+				fileName: 'example.json',
+				mimeType: 'application/json'
+			}, {
+				subjectType: 'drag-n-drop',
+				force: true
+			});
 			cy.get_open_dialog().find('.file-info').should('contain', 'example.json');
 			cy.server();
 			cy.route('POST', '/api/method/upload_file').as('upload_file');
@@ -50,7 +54,7 @@ context('FileUploader', () => {
 		open_upload_dialog();
 
 		cy.get_open_dialog().find('a:contains("web link")').click();
-		cy.get_open_dialog().find('.file-web-link input').type('https://github.com');
+		cy.get_open_dialog().find('.file-web-link input').type('https://github.com', { delay: 100, force: true });
 		cy.server();
 		cy.route('POST', '/api/method/upload_file').as('upload_file');
 		cy.get_open_dialog().find('.btn-primary').click();

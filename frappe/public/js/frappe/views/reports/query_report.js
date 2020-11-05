@@ -874,7 +874,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 		});
 	}
 
-	pdf_report(print_settings) {
+	pdf_report(print_settings, get_html=false) {
 		const base_url = frappe.urllib.get_base_url();
 		const print_css = frappe.boot.print_css;
 		const landscape = print_settings.orientation == 'Landscape';
@@ -907,7 +907,9 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			landscape: landscape,
 			columns: columns
 		});
-
+		if (get_html) {
+			return html;
+		}
 		frappe.render_pdf(html, print_settings);
 	}
 
