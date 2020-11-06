@@ -20,6 +20,12 @@ frappe.ui.form.ControlDatetime = frappe.ui.form.ControlDate.extend({
 		this.$input && this.$input.val(this.format_for_input(value));
 		this.format_for_datepicker(value);
 	},
+	format_for_input: function(value) {
+		if(value) {
+			return frappe.datetime.str_to_user(value, false, true);
+		}
+		return "";
+	},
 	format_for_datepicker: function(value) {
 		if (!this.datepicker) return;
 		if(!value) {
