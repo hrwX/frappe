@@ -15,7 +15,7 @@ import frappe.permissions
 import frappe.share
 import re
 import json
-
+import frappe.defaults
 from frappe.website.utils import is_signup_enabled
 from frappe.utils.background_jobs import enqueue
 
@@ -101,6 +101,9 @@ class User(Document):
 		create_contact(self, ignore_mandatory=True)
 		if self.name not in ('Administrator', 'Guest') and not self.user_image:
 			frappe.enqueue('frappe.core.doctype.user.user.update_gravatar', name=self.name)
+
+		if self.time_zone:
+			frappe.defaults.set_default("time_zone", self.time_zone, self.name)
 
 	def has_website_permission(self, ptype, user, verbose=False):
 		"""Returns true if current user is the session user"""
