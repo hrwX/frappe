@@ -46,7 +46,7 @@ context('FileUploader', () => {
 		cy.route('POST', '/api/method/upload_file').as('upload_file');
 		cy.get_open_dialog().find('.btn-primary').click();
 		cy.wait('@upload_file').its('response.body.message')
-			.should('have.property', 'file_url', '/private/files/example.json');
+			.should('have.property', 'file_url', '/files/example.json');
 		cy.get('.modal:visible').should('not.exist');
 	});
 
