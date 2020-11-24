@@ -15,7 +15,9 @@
   "sb2",
   "resample",
   "cb2",
-  "quality"
+  "quality",
+  "sb3",
+  "cache_timeout"
  ],
  "fields": [
   {
@@ -76,9 +78,20 @@
    "in_list_view": 1,
    "label": "Quality",
    "reqd": 1
+  },
+  {
+   "fieldname": "sb3",
+   "fieldtype": "Section Break",
+   "label": "Caching"
+  },
+  {
+   "default": "900",
+   "fieldname": "cache_timeout",
+   "fieldtype": "Int",
+   "label": "Cache Timeout in Seconds"
   }
  ],
- "modified": "2020-11-10 10:47:14.838106",
+ "modified": "2020-11-16 22:04:17.811138",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "Image Resize Preset",

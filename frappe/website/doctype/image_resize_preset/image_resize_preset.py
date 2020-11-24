@@ -3,8 +3,10 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
-# import frappe
+import frappe
 from frappe.model.document import Document
 
 class ImageResizePreset(Document):
-	pass
+	def clear_cache(self):
+		frappe.cache().delete_keys("base64_image_cache|{}|*".format(self.name))
+		frappe.cache().delete_keys("thumbnail_cache|{}|*".format(self.name))
