@@ -25,6 +25,7 @@
   "disabled",
   "linked_with",
   "is_your_company_address",
+  "ignore_owner_links",
   "links"
  ],
  "fields": [
@@ -149,12 +150,18 @@
    "fieldtype": "Table",
    "label": "Links",
    "options": "Dynamic Link"
+  },
+  {
+   "default": "0",
+   "fieldname": "ignore_owner_links",
+   "fieldtype": "Check",
+   "label": "Ignore Owner Links"
   }
  ],
  "icon": "fa fa-map-marker",
  "idx": 5,
- "modified": "2019-09-08 11:41:04.145589",
- "modified_by": "Administrator",
+ "modified": "2020-11-27 03:34:40.212734",
+ "modified_by": "himanshu@bloomstack.com",
  "module": "Contacts",
  "name": "Address",
  "name_case": "Title Case",
