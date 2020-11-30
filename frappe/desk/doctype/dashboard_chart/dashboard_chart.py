@@ -170,7 +170,7 @@ def get_aggregate_function(chart_type):
 
 
 def convert_to_dates(data, timegrain):
-	""" Converts individual dates within data to the end of period """
+	"""Converts individual dates within data to the end of period"""
 	result = []
 	for d in data:
 		if d[2] != 0:
@@ -301,7 +301,7 @@ def get_quarter_ending(date):
 	return date
 
 def get_year_ending(date):
-	''' returns year ending of the given date '''
+	'''returns year ending of the given date'''
 
 	# first day of next year (note year starts from 1)
 	date = add_to_date('{}-01-01'.format(date.year), months = 12)

@@ -13,6 +13,7 @@
   "enable_email_assignment",
   "enable_email_energy_point",
   "enable_email_share",
+  "enable_email_notify",
   "user",
   "seen"
  ],
@@ -69,6 +70,13 @@
    "label": "Document Share"
   },
   {
+   "default": "1",
+   "depends_on": "enable_email_notifications",
+   "fieldname": "enable_email_notify",
+   "fieldtype": "Check",
+   "label": "Notify for document updates"
+  },
+  {
    "default": "__user",
    "fieldname": "user",
    "fieldtype": "Link",
@@ -86,7 +94,7 @@
   }
  ],
  "in_create": 1,
- "modified": "2019-11-19 12:57:59.356786",
+ "modified": "2020-11-05 12:57:59.356786",
  "modified_by": "Administrator",
  "module": "Desk",
  "name": "Notification Settings",

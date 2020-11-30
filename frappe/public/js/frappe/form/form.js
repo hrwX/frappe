@@ -1256,6 +1256,14 @@ frappe.ui.form.Form = class FrappeForm {
 		return this.fields_dict[field];
 	}
 
+	set_root_read_only(fieldname) {
+		// read-only for root doctype group
+		if (this.meta.is_tree && !this.doc[fieldname] && !this.is_new()) {
+			this.set_read_only();
+			this.set_intro(__("This is a root {0} and cannot be edited.", [this.doc.doctype.bold()]), true);
+		}
+	}
+
 	set_read_only() {
 		var perm = [];
 		var docperms = frappe.perm.get_perm(this.doc.doctype);

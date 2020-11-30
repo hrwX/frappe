@@ -2246,6 +2246,16 @@ class extends Component {
 						})
 						:
 						h("div", { class: "panel-body", style: { "height": "100%" } },
+							h("button", {
+								class: "dropdown-toggle frappe-chat-toggle",
+								style: { "font-size": "9px" },
+								onclick: () => {
+									var expandButton = document.getElementById("resize_button");
+									expandButton.click();
+									var chatButtonToggle = document.getElementById("chat_toggle_navbar");
+									chatButtonToggle.click();
+								}
+								}, "X"),
 							h("div", { class: "vcenter" },
 								h("div", { class: "text-center text-extra-muted" },
 									h(frappe.components.Octicon, { type: "comment-discussion", style: "font-size: 48px" }),

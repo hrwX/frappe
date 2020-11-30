@@ -104,6 +104,7 @@ def get_email_header(doc):
 		'Assignment': _('New Assignment'),
 		'Share': _('New Document Shared'),
 		'Energy Point': _('Energy Point Update'),
+		'Notify': _('New Notification')
 	}[doc.type or 'Default']
 
 

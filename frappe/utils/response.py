@@ -8,7 +8,8 @@ import decimal
 import mimetypes
 import os
 import frappe
-from frappe import _
+import traceback
+from frappe import _, _dict
 import frappe.model.document
 import frappe.utils
 import frappe.sessions
@@ -22,7 +23,6 @@ from frappe.utils import cint
 from six import text_type
 from six.moves.urllib.parse import quote
 from frappe.core.doctype.access_log.access_log import make_access_log
-
 
 def report_error(status_code):
 	'''Build error. Show traceback in developer mode'''
@@ -184,6 +184,63 @@ def download_private_file(path):
 
 	return send_private_file(path.split("/private", 1)[1])
 
+def resize_image(path):
+	"""Processes a /resize/<image file path> path using a preset Image Resize Preset record.
+
+	:param path: Url path of an image
+	
+	Example Usage:
+	
+	/resize/files/myimage.jpg?size=small
+
+	Where size refers to the name of a predefined "Image Resize Preset" record
+	"""
+
+	try:
+		# Transform thumbnail path to public/files/ path
+		file_path = os.path.join('/', *path.split('/')[2:])
+		filename = os.path.basename(file_path)
+
+		# Get image resize preset or default to small if one isn't found
+		image_resize_preset_name = frappe.local.form_dict.size or "small"
+
+		# Build cache path for this image and retrieve data
+		cache_key = "thumbnail_cache|{}|{}".format(image_resize_preset_name, file_path)
+		buffer = frappe.cache().get_value(cache_key, None, None, True)
+
+		if frappe.db.exists("Image Resize Preset", image_resize_preset_name):
+			image_resize_preset = frappe.get_doc("Image Resize Preset", image_resize_preset_name)
+		else:
+			image_resize_preset = frappe.get_doc("Image Resize Preset", "small")
+
+		# build image options
+		options = _dict({ 
+			key: image_resize_preset.get(key) \
+				for key in ("width", "height", "resample", "quality", "cache_timeout")
+		})
+
+		if not buffer:
+
+			from frappe.utils.image import process_thumbnail
+			buffer = process_thumbnail(file_path, options)
+			if buffer:
+				# set cache only when generating a new thumbnail
+				frappe.cache().set_value(cache_key, buffer, None, options.get("cache_timeout", 900))
+
+		if buffer:
+			response = Response(buffer, headers={
+				"Cache-Control": "max-age={}".format(options.get("cache_timeout", 900))
+			}, direct_passthrough=True)
+			response.mimetype = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
+			return response
+
+	except NotFound:
+		raise NotFound
+
+	except Exception:
+		traceback.print_exc()
+
+	raise NotFound
 
 def send_private_file(path):
 	path = os.path.join(frappe.local.conf.get('private_path', 'private'), path.strip("/"))

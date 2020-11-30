@@ -35,7 +35,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Type",
-   "options": "Mention\nEnergy Point\nAssignment\nShare",
+   "options": "Notify\nMention\nEnergy Point\nAssignment\nShare",
    "read_only": 1,
    "search_index": 1
   },
@@ -82,8 +82,8 @@
   }
  ],
  "in_create": 1,
- "modified": "2019-11-12 15:22:35.283678",
- "modified_by": "umair@erpnext.com",
+ "modified": "2020-11-04 22:16:00.528982",
+ "modified_by": "Administrator",
  "module": "Desk",
  "name": "Notification Log",
  "owner": "Administrator",
