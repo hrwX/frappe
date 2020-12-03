@@ -25,6 +25,7 @@
   "disabled",
   "linked_with",
   "is_your_company_address",
+  "ignore_owner_links",
   "links"
  ],
  "fields": [
@@ -108,7 +109,8 @@
   {
    "fieldname": "phone",
    "fieldtype": "Data",
-   "label": "Phone"
+   "label": "Phone",
+   "reqd": 1
   },
   {
    "fieldname": "fax",
@@ -150,6 +152,12 @@
    "fieldtype": "Table",
    "label": "Links",
    "options": "Dynamic Link"
+  },
+  {
+   "default": "0",
+   "fieldname": "ignore_owner_links",
+   "fieldtype": "Check",
+   "label": "Ignore Owner Links"
   }
  ],
  "icon": "fa fa-map-marker",

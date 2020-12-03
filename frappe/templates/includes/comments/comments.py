@@ -13,14 +13,12 @@ def add_comment(comment, comment_email, comment_by, reference_doctype, reference
 	doc = frappe.get_doc(reference_doctype, reference_name)
 
 	if len(comment) < 10:
-		frappe.msgprint(_('Comment Should be atleast 10 characters'))
-		return ''
+		frappe.throw(_('Comment Should be atleast 10 characters'))
 
 	blacklist = ['http://', 'https://', '@gmail.com']
 
 	if any([b in comment for b in blacklist]):
-		frappe.msgprint(_('Comments cannot have links or email addresses'))
-		return ''
+		frappe.throw(_('Comments cannot have links or email addresses'))
 
 	comment = doc.add_comment(
 		text = comment,
