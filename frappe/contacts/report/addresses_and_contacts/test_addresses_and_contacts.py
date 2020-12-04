@@ -55,7 +55,8 @@ def create_linked_address(link_list):
 		"address_line1": "test address line 1",
 		"address_line2": "test address line 2",
 		"city": "Milan",
-		"country": "Italy"
+		"country": "Italy",
+		"phone": "+91 0000000000"
 	})
 
 	for name in link_list:

@@ -45,8 +45,9 @@ class TestComment(unittest.TestCase):
 
 		frappe.db.sql("delete from `tabComment` where reference_doctype = 'Blog Post'")
 
-		add_comment('pleez vizits my site http://mysite.com', 'test@test.com', 'bad commentor',
-			'Blog Post', test_blog.name, test_blog.route)
+		self.assertRaises(frappe.ValidationError, add_comment, comment='pleez vizits my site http://mysite.com', comment_email='test@test.com',
+			comment_by='bad commentor', reference_doctype='Blog Post', reference_name=test_blog.name, route=test_blog.route)
+
 
 		self.assertEqual(len(frappe.get_all('Comment', fields = ['*'], filters = dict(
 			reference_doctype = test_blog.doctype,

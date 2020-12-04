@@ -44,6 +44,7 @@ export default class WebFormList {
 				let col = document.createElement('div.col-sm-4')
 				col.classList.add('col', 'col-sm-3')
 				filter_area.appendChild(col)
+				if (field.default) this.add_filter(field.fieldname, field.default, field.fieldtype);
 
 				let input = frappe.ui.form.make_control({
 					df: {
