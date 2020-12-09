@@ -167,13 +167,24 @@ export default class WebForm extends frappe.ui.FieldGroup {
 	}
 
 	delete() {
+		this.success_title = __("Deleted");
+		this.success_message = __("Deleted Successfully");
+
 		frappe.call({
-			type: "POST",
 			method: "frappe.website.doctype.web_form.web_form.delete",
 			args: {
 				web_form_name: this.name,
 				docname: this.doc.name
-			}
+			},
+			callback: response => {
+				// Check for any exception in response
+				if (!response.exc) {
+					// Success
+					this.handle_success();
+					this.success_title = null;
+					this.success_message = null;
+				}
+			},
 		});
 	}
 
@@ -194,20 +205,14 @@ export default class WebForm extends frappe.ui.FieldGroup {
 		}
 
 		const success_dialog = new frappe.ui.Dialog({
-			title: __("Saved Successfully"),
+			title: this.success_title || __("Saved Successfully"),
 			secondary_action: () => {
-				if (this.success_url) {
-					window.location.href = this.success_url;
-				} else if(this.login_required) {
-					window.location.href =
-						window.location.pathname + "?name=" + data.name;
-				}
+				window.location.href = this.success_url || window.location.pathname;
 			}
 		});
 
 		success_dialog.show();
-		const success_message =
-			this.success_message || __("Your information has been submitted");
+		const success_message = this.success_message || __("Your information has been submitted");
 		success_dialog.set_message(success_message);
 	}
 }

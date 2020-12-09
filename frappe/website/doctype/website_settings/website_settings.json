@@ -43,7 +43,11 @@
   "chat_enable_to",
   "chat_room_name",
   "chat_welcome_message",
-  "chat_operators"
+  "chat_operators",
+  "blog_settings_section",
+  "featured_blog",
+  "column_break_43",
+  "blog_header"
  ],
  "fields": [
   {
@@ -287,13 +291,34 @@
    "fieldtype": "Table",
    "label": "Route Redirects",
    "options": "Website Route Redirect"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "blog_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Blog Settings"
+  },
+  {
+   "fieldname": "featured_blog",
+   "fieldtype": "Link",
+   "label": "Featured Blog",
+   "options": "Blog Post"
+  },
+  {
+   "fieldname": "column_break_43",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "blog_header",
+   "fieldtype": "Attach Image",
+   "label": "Blog Header"
   }
  ],
  "icon": "fa fa-cog",
  "idx": 1,
  "issingle": 1,
  "max_attachments": 10,
- "modified": "2019-06-12 17:16:37.452872",
+ "modified": "2020-11-26 13:51:05.137669",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "Website Settings",

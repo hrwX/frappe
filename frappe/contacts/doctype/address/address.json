@@ -38,7 +38,7 @@
    "fieldname": "address_title",
    "fieldtype": "Data",
    "label": "Address Title",
-   "reqd": 0
+   "reqd": 1
   },
   {
    "fieldname": "address_type",
@@ -162,7 +162,7 @@
  ],
  "icon": "fa fa-map-marker",
  "idx": 5,
- "modified": "2020-12-01 01:27:15.631692",
+ "modified": "2020-12-02 20:42:36.303850",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Address",

@@ -270,3 +270,4 @@ execute:from frappe.desk.page.setup_wizard.install_fixtures import update_gender
 frappe.patches.v12_0.email_unsubscribe
 frappe.patches.v12_0.replace_old_data_import
 frappe.patches.v12_0.change_existing_dashboard_chart_filters
+frappe.patches.v12_0.set_existing_dashboard_charts_as_public

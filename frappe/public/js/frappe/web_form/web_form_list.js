@@ -44,8 +44,7 @@ export default class WebFormList {
 				let col = document.createElement('div.col-sm-4')
 				col.classList.add('col', 'col-sm-3')
 				filter_area.appendChild(col)
-				if (field.default) this.add_filter(field.fieldname, field.default, field.fieldtype);
-
+				if (field.default) this.add_filter(field.fieldname, field.default, field.fieldtype, false);
 				let input = frappe.ui.form.make_control({
 					df: {
 						fieldtype: field.fieldtype,
@@ -67,7 +66,7 @@ export default class WebFormList {
 		})
 	}
 
-	add_filter(field, value, fieldtype) {
+	add_filter(field, value, fieldtype, refresh=true) {
 		if (!value) {
 			delete this.filters[field]
 		}
@@ -75,7 +74,7 @@ export default class WebFormList {
 			if (fieldtype === 'Data') value = ['like', value + '%']
 			Object.assign(this.filters, Object.fromEntries([[field, value]]))
 		}
-		this.refresh();
+		refresh && this.refresh();
 	}
 
 	get_list_view_fields() {
@@ -89,7 +88,7 @@ export default class WebFormList {
 	}
 
 	fetch_data() {
-		if (frappe.system_user === "yes") {
+		if (frappe.system_user === "yes" && this.fields_list.find(el => el.fieldname === "raised_by")) {
 			this.filters.raised_by = frappe.session.user;
 		}
 

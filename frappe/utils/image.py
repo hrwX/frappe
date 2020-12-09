@@ -78,8 +78,8 @@ def get_image_resize_preset(name):
 
 	return preset[0]
 
+@frappe.whitelist()
 def image_to_base64(path, resize_preset_name=None, cache=False):
-
 	path_info = sanitize_image_path(path)
 	if not path_info:
 		return False
@@ -103,6 +103,7 @@ def image_to_base64(path, resize_preset_name=None, cache=False):
 
 	# Enforce image format
 	image_format = IMAGE_FORMAT_MAP.get(extn.upper(), "JPEG")
+	buffer = io.BytesIO()
 
 	if resize_preset_name:
 		preset = get_image_resize_preset(resize_preset_name)

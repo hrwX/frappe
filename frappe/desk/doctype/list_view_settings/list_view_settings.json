@@ -1,0 +1,74 @@
+{
+ "autoname": "Prompt",
+ "creation": "2020-11-04 22:56:06.108848",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "disable_count",
+  "disable_sidebar_stats",
+  "disable_auto_refresh",
+  "total_fields",
+  "fields_html",
+  "fields"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "fieldname": "disable_count",
+   "fieldtype": "Check",
+   "label": "Disable Count"
+  },
+  {
+   "default": "0",
+   "fieldname": "disable_sidebar_stats",
+   "fieldtype": "Check",
+   "label": "Disable Sidebar Stats"
+  },
+  {
+   "default": "0",
+   "fieldname": "disable_auto_refresh",
+   "fieldtype": "Check",
+   "label": "Disable Auto Refresh"
+  },
+  {
+   "fieldname": "total_fields",
+   "fieldtype": "Select",
+   "label": "Maximum Number of Fields",
+   "options": "\n4\n5\n6\n7\n8\n9\n10"
+  },
+  {
+   "fieldname": "fields_html",
+   "fieldtype": "HTML",
+   "label": "Fields"
+  },
+  {
+   "fieldname": "fields",
+   "fieldtype": "Code",
+   "hidden": 1,
+   "label": "Fields",
+   "read_only": 1
+  }
+ ],
+ "modified": "2020-12-02 19:22:45.242469",
+ "modified_by": "Administrator",
+ "module": "Desk",
+ "name": "List View Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "read_only": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

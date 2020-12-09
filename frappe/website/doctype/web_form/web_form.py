@@ -449,7 +449,7 @@ def delete(web_form_name, docname):
 	if frappe.session.user == owner and web_form.allow_delete:
 		frappe.delete_doc(web_form.doc_type, docname, ignore_permissions=True)
 	else:
-		raise frappe.PermissionError("Not Allowed")
+		frappe.throw(_("Not Allowed"), frappe.PermissionError)
 
 
 @frappe.whitelist()
