@@ -42,6 +42,7 @@ class PostgresDatabase(Database):
 			'Long Text':	('text', ''),
 			'Code':			('text', ''),
 			'Text Editor':	('text', ''),
+			'TipTap Editor':	('text', ''),
 			'Markdown Editor':	('text', ''),
 			'HTML Editor':	('text', ''),
 			'Date':			('date', ''),

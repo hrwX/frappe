@@ -42,6 +42,8 @@
     "showdown": "^1.9.1",
     "socket.io": "^2.0.4",
     "superagent": "^3.8.2",
+    "tiptap": "^1.30.0",
+    "tiptap-extensions": "^1.33.2",
     "touch": "^3.1.0",
     "vue": "^2.6.8",
     "vue-router": "^2.0.0"
@@ -53,7 +55,7 @@
     "cypress-file-upload": "^3.1.0",
     "graphlib": "^2.1.8",
     "less": "^3.11.1",
-    "node-sass": "^4.13.1",
+    "node-sass": "^5.0.0",
     "rollup": "^1.2.2",
     "rollup-plugin-buble": "^0.19.2",
     "rollup-plugin-commonjs": "^8.3.0",
