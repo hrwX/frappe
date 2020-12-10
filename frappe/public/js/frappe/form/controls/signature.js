@@ -67,7 +67,7 @@ frappe.ui.form.ControlSignature = frappe.ui.form.ControlData.extend({
 			}
 		};
 
-		if (this.frm) {
+		if (this.frm && !this.frm.is_new()) {
 			options.doctype = this.frm.doctype;
 			options.docname = this.frm.docname;
 		}
@@ -90,7 +90,7 @@ frappe.ui.form.ControlSignature = frappe.ui.form.ControlData.extend({
 			},
 			callback: function (r) {
 				me.set_my_value(r.message);
-				me.set_image(this.get_value());
+				me.set_image(me.get_value());
 			}
 		});
 	},

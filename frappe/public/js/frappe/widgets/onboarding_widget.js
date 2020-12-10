@@ -360,7 +360,7 @@ export default class OnboardingWidget extends Widget {
 					return !(step.is_complete || step.is_skipped);
 				});
 
-				if (pending.length == 0) {
+				if (pending.length === 0) {
 					this.show_success();
 				}
 			});

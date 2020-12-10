@@ -176,7 +176,7 @@ export default class WidgetGroup {
 
 		return {
 			order: this.widget_order,
-			widgets: prepared_dict,
+			widgets: prepared_dict
 		};
 	}
 }

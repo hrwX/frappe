@@ -234,10 +234,11 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 
 	}
 
-	refresh_columns(meta, list_view_settings) {
+	refresh_fields(meta, list_view_settings) {
 		this.meta = meta;
 		this.list_view_settings = list_view_settings;
 
+		this.filter_area.setup(true);
 		this.setup_columns();
 		this.refresh(true);
 	}
@@ -1297,7 +1298,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 
 		if (frappe.user.has_role('System Manager')) {
 			items.push({
-				label: __('Settings'),
+				label: __('List Settings'),
 				action: () => this.show_list_settings(),
 				standard: true
 			});

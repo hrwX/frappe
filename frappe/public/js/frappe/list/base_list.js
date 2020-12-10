@@ -446,12 +446,24 @@ frappe.ui.FilterArea = class FilterArea {
 		this.standard_filters_wrapper = this.list_view.page.page_form;
 		this.$filter_list_wrapper = $('<div class="filter-list">').appendTo(this.list_view.$frappe_list);
 		this.trigger_refresh = true;
+		this.filter_list = null;
 		this.setup();
 	}
 
-	setup() {
-		this.make_standard_filters();
-		this.make_filter_list();
+	setup(refresh_filters=false) {
+		if (refresh_filters) {
+			this.list_view.page.clear_fields();
+		}
+
+		if (this.has_custom_filters_config()) {
+			this.make_custom_filters();
+		} else {
+			this.make_standard_filters();
+		}
+
+		if (!this.filter_list) {
+			this.make_filter_list();
+		}
 	}
 
 	get() {
@@ -598,7 +610,7 @@ frappe.ui.FilterArea = class FilterArea {
 			}
 		];
 
-		if(this.list_view.custom_filter_configs) {
+		if (this.list_view.custom_filter_configs) {
 			this.list_view.custom_filter_configs.forEach(config => {
 				config.onchange = () => this.refresh_list_view();
 			});
@@ -631,6 +643,7 @@ frappe.ui.FilterArea = class FilterArea {
 				default_value = null;
 			}
 			return {
+				doctype: this.list_view.doctype,
 				fieldtype: fieldtype,
 				label: __(df.label),
 				options: options,
@@ -646,9 +659,19 @@ frappe.ui.FilterArea = class FilterArea {
 		fields.map(df => this.list_view.page.add_field(df));
 	}
 
+	make_custom_filters() {
+		let fields = JSON.parse(this.list_view.list_view_settings.filters);
+		fields.forEach(field => {
+			field.onchange = () => this.refresh_list_view();
+		});
+
+		fields.map(df => this.list_view.page.add_field(df));
+	}
+
 	get_standard_filters() {
 		const filters = [];
 		const fields_dict = this.list_view.page.fields_dict;
+
 		for (let key in fields_dict) {
 			let field = fields_dict[key];
 			let value = field.get_value();
@@ -682,6 +705,14 @@ frappe.ui.FilterArea = class FilterArea {
 		// returns true if user is currently editing filters
 		return this.filter_list &&
 			this.filter_list.wrapper.find('.filter-box:visible').length > 0;
+	}
+
+	has_custom_filters_config() {
+		if (this.list_view.list_view_settings && this.list_view.list_view_settings.filters && JSON.parse(this.list_view.list_view_settings.filters).length) {
+			return true;
+		}
+
+		return false;
 	}
 }
 

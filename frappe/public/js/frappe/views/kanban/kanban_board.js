@@ -578,7 +578,9 @@ frappe.provide("frappe.views");
 
 		function add_task_link() {
 			let taskLink = frappe.utils.get_form_link(card.doctype, card.name);
-			self.$card.find('.kanban-card-redirect').attr('href', taskLink);			
+			self.$card.find('.kanban-card-redirect').on("click", function() {
+				new frappe.ui.kanbanForm(card.doctype, card.name);
+			});
 		}
 
 		function refresh_dialog() {
@@ -822,3 +824,82 @@ frappe.provide("frappe.views");
 		return $temp.html();
 	}
 })();
+
+
+frappe.ui.kanbanForm = class {
+/*
+* create Kanban Card On Click Dialog
+*/
+	constructor(doctype, docname) {
+		this.doctype = doctype;
+		this.docname = docname;
+		this.set_meta_and_doc();
+	}
+	set_meta_and_doc() {
+		/**
+		 * Pull all Required, Bold, Allow Quick Entry Fields to show on Kanban Dialog
+		 */
+		this.fields = [];
+		frappe.model.with_doctype(this.doctype, () => {
+			this.meta = frappe.get_meta(this.doctype);
+
+			// Escape field type "Table MultiSelects" and "Table"
+			this.meta.fields.forEach(field => {
+				if (field.fieldtype != "Table MultiSelect" && field.fieldtype != "Table") {
+					this.fields.push(field);
+				}
+			});
+			this.mandatory = $.map(this.fields, function (d) {
+				return ((d.reqd || d.bold || d.allow_in_quick_entry) && !d.read_only) ? $.extend({}, d) : null;
+			});
+			// Push Assignment Field For quick Entry
+			this.mandatory.push({
+				fieldtype: 'MultiSelectPills',
+				fieldname: 'assign_to',
+				label: __("Assign To"),
+				reqd: false,
+				get_data: function(txt) {
+					return frappe.db.get_link_options("User", txt, {user_type: "System User", enabled: 1});
+				}
+			});
+			frappe.db.get_doc(this.doctype, this.docname).then(r => {
+				this.doc = r;
+				this.create_dialog();
+			});
+		});
+
+	}
+
+	create_dialog() {
+		/**
+		 * create Kanban Dialog and handle on_submit and
+		 */
+		let me = this;
+		let d = new frappe.ui.Dialog({
+			title: __("{0}: {1}", [this.doctype, this.docname]),
+			fields: this.mandatory,
+			primary_action(values) {
+				frappe.call({
+					method: "frappe.desk.doctype.kanban_board.kanban_board.on_submit_kanban_dialog", // call Save functionality for Doctype
+					args: {
+						"docname": me.docname,
+						"doctype": me.doctype,
+						"values": values
+					}
+				});
+				d.hide();
+			}
+		});
+		d.set_values(this.doc);
+		d.show();
+		// append Edit Full page Button on Kanban Dialog
+		var $link = $('<div style="padding-left: 7px; padding-top: 30px; padding-bottom: 10px;">' +
+			'<button class="edit-full btn-default btn-sm">' + __("Edit in full page") + '</button></div>').appendTo(d.body);
+
+		$link.find('.edit-full').on('click', function () {
+			frappe.set_route('Form', me.doctype, me.docname);
+		});
+
+	}
+
+};

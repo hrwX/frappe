@@ -194,10 +194,7 @@ def get_first_day_of_week(dt):
 	return dt - datetime.timedelta(days=dt.weekday())
 
 def get_last_day(dt):
-	"""
-	 Returns last day of the month using:
-	 `get_first_day(dt, 0, 1) + datetime.timedelta(-1)`
-	"""
+	"""Returns last day of the month using: `get_first_day(dt, 0, 1) + datetime.timedelta(-1)`."""
 	return get_first_day(dt, 0, 1) + datetime.timedelta(-1)
 
 def get_quarter_start(dt, as_str=False):
@@ -214,13 +211,6 @@ def get_year_start(dt, as_str=False):
 def get_last_day_of_week(dt):
 	dt = get_first_day_of_week(dt)
 	return dt + datetime.timedelta(days=6)
-
-def get_last_day(dt):
-	"""
-	 Returns last day of the month using:
-	 `get_first_day(dt, 0, 1) + datetime.timedelta(-1)`
-	"""
-	return get_first_day(dt, 0, 1) + datetime.timedelta(-1)
 
 def get_quarter_ending(date):
 	date = getdate(date)
