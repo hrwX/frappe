@@ -93,6 +93,10 @@ class BlogPost(WebsiteGenerator):
 
 
 def get_list_context(context=None):
+	website_settings = frappe.get_doc("Website Settings")
+	featured_blog = None
+	if website_settings.featured_blog:
+		featured_blog = frappe.get_doc("Blog Post", website_settings.featured_blog).as_dict()
 	list_context = frappe._dict(
 		template = "templates/includes/blog/blog.html",
 		get_list = get_blog_list,
@@ -100,7 +104,9 @@ def get_list_context(context=None):
 		children = get_children(),
 		# show_search = True,
 		title = _('Blog'),
-		page_heading_template = frappe.get_hooks('blogs_page_heading_template') or ''
+		page_heading_template = frappe.get_hooks('blogs_page_heading_template') or 'website/doctype/blog_post/templates/blog_post_header.html',
+		featured_blog = featured_blog,
+		background_image = website_settings.blog_header or None
 	)
 
 	category = sanitize_html(frappe.local.form_dict.blog_category or frappe.local.form_dict.category)
