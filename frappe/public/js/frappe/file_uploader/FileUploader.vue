@@ -144,6 +144,9 @@ export default {
 		docname: {
 			default: null
 		},
+		fieldname: {
+			default: null
+		},
 		folder: {
 			default: 'Home'
 		},
@@ -440,6 +443,8 @@ export default {
 				if (this.method) {
 					form_data.append('method', this.method);
 				}
+
+				form_data.append('fieldname', this.fieldname);
 
 				xhr.send(form_data);
 			});
