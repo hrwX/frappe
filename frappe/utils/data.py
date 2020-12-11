@@ -227,11 +227,9 @@ def get_quarter_ending(date):
 	return date
 
 def get_year_ending(date):
-	''' returns year ending of the given date '''
-	# first day of next year (note year starts from 1)
-	date = add_to_date('{}-01-01'.format(date.year), months = 12)
-	# last day of this month
-	return add_to_date(date, days=-1)
+	'''Returns year ending of the given date.'''
+	date = add_to_date('{}-01-01'.format(date.year), months = 12) # first day of next year (note year starts from 1)
+	return add_to_date(date, days=-1) # last day of this month
 
 def get_time(time_str):
 	if isinstance(time_str, datetime.datetime):
