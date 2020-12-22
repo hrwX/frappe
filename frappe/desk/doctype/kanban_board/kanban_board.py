@@ -216,11 +216,12 @@ def on_submit_kanban_dialog(docname, doctype, values):
 	"""To update and save kanban card from dialog box !"""
 	values = json.loads(values)
 	doc = frappe.get_doc(doctype, docname)
-	assignees = values.pop("assign_to")
-	add({
-		"doctype": doctype,
-		"name": docname,
-		"assign_to": assignees
-	})
+	if "assign_to" in values.keys():
+		assignees = values.pop("assign_to")
+		add({
+			"doctype": doctype,
+			"name": docname,
+			"assign_to": assignees
+		})
 	doc.update(values)
 	doc.save()

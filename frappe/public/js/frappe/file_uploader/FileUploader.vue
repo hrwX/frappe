@@ -144,6 +144,9 @@ export default {
 		docname: {
 			default: null
 		},
+		fieldname: {
+			default: null
+		},
 		folder: {
 			default: 'Home'
 		},
@@ -225,6 +228,7 @@ export default {
 			let files = Array.from(file_array)
 				.filter(this.check_restrictions)
 				.map(file => {
+					let is_image = file.type.startsWith('image');
 					return {
 						file_obj: file,
 						name: file.name,
@@ -233,7 +237,7 @@ export default {
 						total: 0,
 						failed: false,
 						uploading: false,
-						private: 0
+						private: !is_image
 					}
 				});
 			this.files = this.files.concat(files);
@@ -440,6 +444,8 @@ export default {
 				if (this.method) {
 					form_data.append('method', this.method);
 				}
+
+				form_data.append('fieldname', this.fieldname);
 
 				xhr.send(form_data);
 			});

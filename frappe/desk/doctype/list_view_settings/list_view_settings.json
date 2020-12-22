@@ -8,9 +8,13 @@
   "disable_count",
   "disable_sidebar_stats",
   "disable_auto_refresh",
+  "listview_fields_section",
   "total_fields",
   "fields_html",
-  "fields"
+  "fields",
+  "listview_filters_section",
+  "filters_html",
+  "filters"
  ],
  "fields": [
   {
@@ -40,7 +44,7 @@
   {
    "fieldname": "fields_html",
    "fieldtype": "HTML",
-   "label": "Fields"
+   "label": "ListView Fields"
   },
   {
    "fieldname": "fields",
@@ -48,9 +52,32 @@
    "hidden": 1,
    "label": "Fields",
    "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "listview_fields_section",
+   "fieldtype": "Section Break",
+   "label": "ListView Fields"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "listview_filters_section",
+   "fieldtype": "Section Break",
+   "label": "ListView Filters"
+  },
+  {
+   "fieldname": "filters_html",
+   "fieldtype": "HTML",
+   "label": "Filters HTML"
+  },
+  {
+   "fieldname": "filters",
+   "fieldtype": "Code",
+   "hidden": 1,
+   "label": "Filters"
   }
  ],
- "modified": "2020-12-02 19:22:45.242469",
+ "modified": "2020-12-04 06:07:19.594538",
  "modified_by": "Administrator",
  "module": "Desk",
  "name": "List View Settings",

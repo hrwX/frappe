@@ -12,9 +12,6 @@ from frappe import _
 def add_comment(comment, comment_email, comment_by, reference_doctype, reference_name, route):
 	doc = frappe.get_doc(reference_doctype, reference_name)
 
-	if len(comment) < 10:
-		frappe.throw(_('Comment Should be atleast 10 characters'))
-
 	blacklist = ['http://', 'https://', '@gmail.com']
 
 	if any([b in comment for b in blacklist]):

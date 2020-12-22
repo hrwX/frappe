@@ -308,7 +308,7 @@ def export_query():
 	if isinstance(data.get("file_format_type"), string_types):
 		file_format_type = data["file_format_type"]
 
-	custom_columns = frappe.parse_json(data["custom_columns"])
+	custom_columns = frappe.parse_json(data.get("custom_columns", "[]"))
 
 	include_indentation = data["include_indentation"]
 	if isinstance(data.get("visible_idx"), string_types):

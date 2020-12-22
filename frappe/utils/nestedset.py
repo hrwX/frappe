@@ -164,6 +164,8 @@ def rebuild_node(doctype, parent, left, parent_field):
 	# get all children of this node
 	result = frappe.db.sql("SELECT name FROM `tab{0}` WHERE `{1}`=%s"
 		.format(doctype, parent_field), (parent))
+
+	#iterate over the children for this parent
 	for r in result:
 		right = rebuild_node(doctype, r[0], right, parent_field)
 
@@ -190,6 +192,10 @@ class NestedSet(Document):
 	def on_update(self):
 		update_nsm(self)
 		self.validate_ledger()
+
+	def after_insert(self):
+		if self.nsm_parent_field:
+			rebuild_tree(self.meta.name, self.nsm_parent_field)
 
 	def on_trash(self, allow_root_deletion=False):
 		if not getattr(self, 'nsm_parent_field', None):

@@ -60,16 +60,17 @@ frappe.ui.form.ControlSignature = frappe.ui.form.ControlData.extend({
 	},
 	get_upload_options() {
 		var me = this;
-		let options = {
+		var options = {
 			allow_multiple: false,
 			on_success: file => {
 				me.on_upload_complete(file);
 			}
 		};
 
-		if (this.frm) {
+		if (this.frm && !this.frm.is_new()) {
 			options.doctype = this.frm.doctype;
 			options.docname = this.frm.docname;
+			options.fieldname = this.df.fieldname;
 		}
 
 		if (this.df.options) {
@@ -90,7 +91,7 @@ frappe.ui.form.ControlSignature = frappe.ui.form.ControlData.extend({
 			},
 			callback: function (r) {
 				me.set_my_value(r.message);
-				me.set_image(this.get_value());
+				me.set_image(me.get_value());
 			}
 		});
 	},
