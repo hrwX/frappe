@@ -687,8 +687,9 @@ def validate_fields(meta):
 	10. Fold is not at the end (if set).
 	11. `search_fields` are valid.
 	12. `title_field` and title field pattern are valid.
-	13. `unique` check is only valid for Data, Link and Read Only fieldtypes.
-	14. `unique` cannot be checked if there exist non-unique values.
+	13. `title_field` should not be present in searchfields
+	14. `unique` check is only valid for Data, Link and Read Only fieldtypes.
+	15. `unique` cannot be checked if there exist non-unique values.
 
 	:param meta: `frappe.model.meta.Meta` object to check."""
 
@@ -861,6 +862,17 @@ def validate_fields(meta):
 			_validate_title_field_pattern(df.default)
 
 
+	def check_link_title_in_searchfields(meta):
+		"""Check if `title_field` in searchfields."""
+		if not meta.get("title_field"):
+			return
+
+		search_fields = [field.strip() for field in (meta.search_fields or "").split(",")]
+
+		if meta.get("title_field").strip() in search_fields:
+			frappe.throw(_("Title Field {0} should not be present in Search Fields.").format(frappe.bold(meta.get("title_field").strip())))
+
+
 	def check_image_field(meta):
 		'''check image_field exists and is of type "Attach Image"'''
 		if not meta.image_field:
@@ -979,6 +991,7 @@ def validate_fields(meta):
 	check_fold(fields)
 	check_search_fields(meta, fields)
 	check_title_field(meta)
+	check_link_title_in_searchfields(meta)
 	check_timeline_field(meta)
 	check_is_published_field(meta)
 	check_sort_field(meta)

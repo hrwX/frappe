@@ -225,6 +225,7 @@
 		"public/js/frappe/utils/energy_point_utils.js",
 		"public/js/frappe/utils/dashboard_utils.js",
 		"public/js/frappe/ui/chart.js",
+		"public/js/frappe/link_title.js",
 		"public/js/frappe/barcode_scanner/index.js",
 
 		"public/js/frappe/widgets/widget_group.js",

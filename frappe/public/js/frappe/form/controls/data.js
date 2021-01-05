@@ -120,21 +120,18 @@ frappe.ui.form.ControlData = frappe.ui.form.ControlInput.extend({
 				// invalid email
 				return '';
 			} else {
-				var invalid_email = false;
+				let invalid_emails = [];
 				email_list.forEach(function(email) {
 					if (!validate_email(email)) {
-						frappe.msgprint(__("Invalid Email: {0}", [email]));
-						invalid_email = true;
+						invalid_emails.push(email);
 					}
 				});
 
-				if (invalid_email) {
-					// at least 1 invalid email
-					return '';
-				} else {
-					// all good
-					return v;
+				if (invalid_emails.length !== 0) {
+					frappe.throw(__("Invalid Email: {0}", [invalid_emails.join(", ")]));
 				}
+
+				return v;
 			}
 
 		} else {

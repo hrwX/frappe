@@ -249,7 +249,7 @@
  "idx": 1,
  "is_published_field": "published",
  "max_attachments": 20,
- "modified": "2019-10-02 13:58:50.825481",
+ "modified": "2020-12-31 00:50:45.873733",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "Web Page",
@@ -265,7 +265,6 @@
    "write": 1
   }
  ],
- "search_fields": "title",
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "ASC",

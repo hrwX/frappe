@@ -41,7 +41,7 @@
   }
  ],
  "icon": "fa fa-globe",
- "modified": "2019-07-19 16:32:12.652550",
+ "modified": "2020-12-31 00:50:49.230312",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Language",
@@ -64,7 +64,6 @@
    "share": 1
   }
  ],
- "search_fields": "language_name",
  "sort_field": "modified",
  "sort_order": "DESC",
  "title_field": "language_name",

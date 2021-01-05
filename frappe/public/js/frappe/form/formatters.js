@@ -95,12 +95,14 @@ frappe.form.formatters = {
 	Link: function(value, docfield, options, doc) {
 		var doctype = docfield._options || docfield.options;
 		var original_value = value;
+		let link_title = frappe.get_link_title(doctype, value);
+
 		if(value && value.match && value.match(/^['"].*['"]$/)) {
 			value.replace(/^.(.*).$/, "$1");
 		}
 
 		if(options && (options.for_print || options.only_value)) {
-			return value;
+			return link_title || value;
 		}
 
 		if(frappe.form.link_formatters[doctype]) {
@@ -113,20 +115,22 @@ frappe.form.formatters = {
 		if(!value) {
 			return "";
 		}
+
 		if(value[0] == "'" && value[value.length -1] == "'") {
 			return value.substring(1, value.length - 1);
 		}
 		if(docfield && docfield.link_onclick) {
 			return repl('<a onclick="%(onclick)s">%(value)s</a>',
 				{onclick: docfield.link_onclick.replace(/"/g, '&quot;'), value:value});
-		} else if(docfield && doctype) {
+		} else if (docfield && doctype) {
 			return `<a class="grey"
 				href="#Form/${encodeURIComponent(doctype)}/${encodeURIComponent(original_value)}"
 				data-doctype="${doctype}"
-				data-name="${original_value}">
-				${__(options && options.label || value)}</a>`
+				data-name="${original_value}"
+				data-value="${original_value}">
+				${__(options && options.label || link_title || value)}</a>`;
 		} else {
-			return value;
+			return link_title || value;
 		}
 	},
 	Date: function(value) {

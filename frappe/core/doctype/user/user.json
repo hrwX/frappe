@@ -586,7 +586,7 @@
  "idx": 413,
  "image_field": "user_image",
  "max_attachments": 5,
- "modified": "2019-10-22 14:16:34.810223",
+ "modified": "2020-12-31 00:50:43.396061",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "User",
@@ -614,7 +614,6 @@
   }
  ],
  "quick_entry": 1,
- "search_fields": "full_name",
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "DESC",

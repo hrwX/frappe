@@ -50,6 +50,7 @@ def getdoc(doctype, name, user=None):
 
 	doc.add_seen()
 
+	set_link_titles(doc)
 	frappe.response.docs.append(doc)
 
 @frappe.whitelist()
@@ -71,7 +72,7 @@ def getdoctype(doctype, with_parent=False, cached_timestamp=None):
 
 	frappe.response['user_settings'] = get_user_settings(parent_dt or doctype)
 
-	if cached_timestamp and docs[0].modified==cached_timestamp:
+	if cached_timestamp and docs[0].modified == cached_timestamp:
 		return "use_cache"
 
 	frappe.response.docs.extend(docs)
@@ -89,6 +90,7 @@ def get_docinfo(doc=None, doctype=None, name=None):
 		doc = frappe.get_doc(doctype, name)
 		if not doc.has_permission("read"):
 			raise frappe.PermissionError
+
 	frappe.response["docinfo"] = {
 		"attachments": get_attachments(doc.doctype, doc.name),
 		"communications": _get_communications(doc.doctype, doc.name),
@@ -105,6 +107,51 @@ def get_docinfo(doc=None, doctype=None, name=None):
 		"tags": get_tags(doc.doctype, doc.name),
 		"document_email": get_document_email(doc.doctype, doc.name)
 	}
+
+def set_link_titles(doc):
+	meta = frappe.get_meta(doc.doctype)
+	link_titles = {}
+	link_titles.update(get_title_values_for_link_and_dynamic_link_fields(meta, doc))
+	link_titles.update(get_title_values_for_table_and_multiselect_fields(meta, doc))
+
+	send_link_titles(link_titles)
+
+def get_title_values_for_link_and_dynamic_link_fields(meta, doc, link_fields=None):
+	link_titles = {}
+
+	if not link_fields:
+		link_fields = meta.get_link_fields() + meta.get_dynamic_link_fields()
+
+	for field in link_fields:
+		if not doc.get(field.fieldname):
+			continue
+
+		doctype = field.options if field.fieldtype == "Link" else doc.get(field.options)
+
+		meta = frappe.get_meta(doctype)
+		if not meta or not (meta.title_field and meta.show_title_field_in_link):
+			continue
+
+		link_title = frappe.get_cached_value(doctype, doc.get(field.fieldname), meta.title_field)
+		link_titles.update({doctype + "::" + doc.get(field.fieldname): link_title})
+
+	return link_titles
+
+def get_title_values_for_table_and_multiselect_fields(meta, doc, table_fields=None):
+	link_titles = {}
+
+	if not table_fields:
+		table_fields = meta.get_table_fields()
+
+	for field in table_fields:
+		if not doc.get(field.fieldname):
+			continue
+
+		_meta = frappe.get_meta(field.options)
+		for value in doc.get(field.fieldname):
+			link_titles.update(get_title_values_for_link_and_dynamic_link_fields(_meta, value))
+
+	return link_titles
 
 def get_milestones(doctype, name):
 	return frappe.db.get_all('Milestone', fields = ['creation', 'owner', 'track_field', 'value'],
@@ -150,7 +197,7 @@ def get_point_logs(doctype, docname):
 def _get_communications(doctype, name, start=0, limit=20):
 	communications = get_communication_data(doctype, name, start, limit)
 	for c in communications:
-		if c.communication_type=="Communication":
+		if c.communication_type == "Communication":
 			c.attachments = json.dumps(frappe.get_all("File",
 				fields=["file_url", "is_private"],
 				filters={"attached_to_doctype": "Communication",
@@ -179,7 +226,7 @@ def get_communication_data(doctype, name, start=0, limit=20, after=None, fields=
 			AND C.creation > {0}
 		'''.format(after)
 
-	if doctype=='User':
+	if doctype == 'User':
 		conditions += '''
 			AND NOT (C.reference_doctype='User' AND C.communication_type='Communication')
 		'''
@@ -277,3 +324,10 @@ def get_document_email(doctype, name):
 
 def get_automatic_email_link():
 	return frappe.db.get_value("Email Account", {"enable_incoming": 1, "enable_automatic_linking": 1}, "email_id")
+
+def send_link_titles(link_titles):
+	"""Append link titles dict in `frappe.local.response`."""
+	if "_link_titles" not in frappe.local.response:
+		frappe.local.response["_link_titles"] = {}
+
+	frappe.local.response["_link_titles"].update(link_titles)

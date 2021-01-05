@@ -188,7 +188,7 @@
    "label": "Repeat on Last Day of the Month"
   }
  ],
- "modified": "2019-07-17 11:30:51.412317",
+ "modified": "2020-12-31 00:50:50.740293",
  "modified_by": "Administrator",
  "module": "Automation",
  "name": "Auto Repeat",
@@ -231,7 +231,6 @@
    "write": 1
   }
  ],
- "search_fields": "reference_document",
  "sort_field": "modified",
  "sort_order": "DESC",
  "title_field": "reference_document",

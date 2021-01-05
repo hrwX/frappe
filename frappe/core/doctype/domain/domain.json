@@ -17,7 +17,7 @@
    "unique": 1
   }
  ],
- "modified": "2019-06-30 13:24:13.732202",
+ "modified": "2020-12-31 00:50:52.162662",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Domain",
@@ -47,7 +47,6 @@
   }
  ],
  "quick_entry": 1,
- "search_fields": "domain",
  "sort_field": "modified",
  "sort_order": "DESC",
  "title_field": "domain"

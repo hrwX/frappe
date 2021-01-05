@@ -62,7 +62,7 @@
    "label": "URLs"
   }
  ],
- "modified": "2019-11-07 13:21:19.395927",
+ "modified": "2020-12-31 00:50:42.122683",
  "modified_by": "Administrator",
  "module": "Chat",
  "name": "Chat Message",
@@ -82,7 +82,7 @@
   }
  ],
  "quick_entry": 1,
- "search_fields": "content, user",
+ "search_fields": "user",
  "sort_field": "modified",
  "sort_order": "DESC",
  "title_field": "content",

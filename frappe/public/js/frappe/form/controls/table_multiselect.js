@@ -28,6 +28,7 @@ frappe.ui.form.ControlTableMultiSelect = frappe.ui.form.ControlLink.extend({
 
 			this.parse_validate_and_set_in_model('');
 		});
+
 		this.$input_area.on('click', '.btn-link-to-form', (e) => {
 			const $target = $(e.currentTarget);
 			const $value = $target.closest('.tb-selected-value');
@@ -36,6 +37,7 @@ frappe.ui.form.ControlTableMultiSelect = frappe.ui.form.ControlLink.extend({
 			const link_field = this.get_link_field();
 			frappe.set_route('Form', link_field.options, value);
 		});
+
 		this.$input.on('keydown', e => {
 			// if backspace key pressed on empty input, delete last value
 			if (e.keyCode == frappe.ui.keyCode.BACKSPACE && e.target.value === '') {
@@ -47,7 +49,7 @@ frappe.ui.form.ControlTableMultiSelect = frappe.ui.form.ControlLink.extend({
 	setup_buttons() {
 		this.$input_area.find('.link-btn').remove();
 	},
-	parse(value) {
+	parse(value, label) {
 		const link_field = this.get_link_field();
 
 		if (value) {
@@ -60,6 +62,7 @@ frappe.ui.form.ControlTableMultiSelect = frappe.ui.form.ControlLink.extend({
 					[link_field.fieldname]: value
 				});
 			}
+			frappe.add_link_title(link_field.options, value, label);
 		}
 
 		return this.rows;
@@ -107,9 +110,7 @@ frappe.ui.form.ControlTableMultiSelect = frappe.ui.form.ControlLink.extend({
 	},
 	set_formatted_input(value) {
 		this.rows = value || [];
-		const link_field = this.get_link_field();
-		const values = this.rows.map(row => row[link_field.fieldname]);
-		this.set_pill_html(values);
+		this.set_pill_html(this.rows);
 	},
 	set_pill_html(values) {
 		const html = values
@@ -120,9 +121,11 @@ frappe.ui.form.ControlTableMultiSelect = frappe.ui.form.ControlLink.extend({
 		this.$input_area.prepend(html);
 	},
 	get_pill_html(value) {
-		const encoded_value = encodeURIComponent(value);
+		const link_field = this.get_link_field();
+		const encoded_value = encodeURIComponent(value.name);
+		const pill_name = frappe.get_link_title(link_field.options, value[link_field.fieldname]) || value.name;
 		return `<div class="btn-group tb-selected-value" data-value="${encoded_value}">
-			<button class="btn btn-default btn-xs btn-link-to-form">${__(value)}</button>
+			<button class="btn btn-default btn-xs btn-link-to-form">${__(pill_name)}</button>
 			<button class="btn btn-default btn-xs btn-remove">
 				<i class="fa fa-remove text-muted"></i>
 			</button>

@@ -172,53 +172,45 @@ frappe.Application = Class.extend({
 	email_password_prompt: function(email_account,user,i) {
 		var me = this;
 		var d = new frappe.ui.Dialog({
-			title: __('Email Account setup please enter your password for: '+email_account[i]["email_id"]),
+			title: __('Email Account Setup: {0}', [email_account[i]["email_id"]]),
 			fields: [
 				{	'fieldname': 'password',
 					'fieldtype': 'Password',
 					'label': 'Email Account Password',
 					'reqd': 1
-				},
-				{
-					"fieldtype": "Button",
-					"label": __("Submit")
 				}
-			]
-		});
-		d.get_input("submit").on("click", function() {
-			//setup spinner
-			d.hide();
-			var s = new frappe.ui.Dialog({
-				title: __("Checking one moment"),
-				fields: [{
-					"fieldtype": "HTML",
-					"fieldname": "checking"
-				}]
-			});
-			s.fields_dict.checking.$wrapper.html('<i class="fa fa-spinner fa-spin fa-4x"></i>');
-			s.show();
-			frappe.call({
-				method: 'frappe.core.doctype.user.user.set_email_password',
-				args: {
-					"email_account": email_account[i]["email_account"],
-					"user": user,
-					"password": d.get_value("password")
-				},
-				callback: function(passed) {
-					s.hide();
-					d.hide();//hide waiting indication
-					if (!passed["message"]) {
-						frappe.show_alert("Login Failed please try again", 5);
-						me.email_password_prompt(email_account, user, i);
-					} else {
-						if (i + 1 < email_account.length) {
-							i = i + 1;
+			],
+			primary_action() {
+				d.hide();
+
+				frappe.call({
+					method: 'frappe.core.doctype.user.user.set_email_password',
+					args: {
+						"email_account": email_account[i]["email_account"],
+						"user": user,
+						"password": d.get_value("password")
+					},
+					callback: function(r) {
+						if (!r.message) {
+							frappe.show_alert({
+								indicator: 'red',
+								message: __('Login Failed. Please try again.')
+							});
 							me.email_password_prompt(email_account, user, i);
+							return;
+						}
+
+						frappe.show_alert({
+							indicator: 'green',
+							message: __('Email Account {0} configured.', [email_account[i]["email_account"]])
+						});
+
+						if (i++ < email_account.length) {
+							me.email_password_prompt(email_account, user, i++);
 						}
 					}
-
-				}
-			});
+				});
+			},
 		});
 		d.show();
 	},

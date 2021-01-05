@@ -14,7 +14,7 @@ import './dynamic_link';
 import './text';
 import './code';
 import './text_editor';
-import './tiptap_editor';
+import './tiptap';
 import './comment';
 import './check';
 import './image';
