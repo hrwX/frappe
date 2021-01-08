@@ -95,6 +95,10 @@ class Contact(Document):
 		if len([email.email_id for email in self.email_ids if email.is_primary]) > 1:
 			frappe.throw(_("Only one {0} can be set as primary.").format(frappe.bold("Email ID")))
 
+		# If only one entry in email_ids, set that as primary
+		if len(self.email_ids) == 1:
+			self.email_ids[0].is_primary = 1
+
 		for d in self.email_ids:
 			if d.is_primary == 1:
 				self.email_id = d.email_id.strip()
