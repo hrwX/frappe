@@ -459,6 +459,7 @@ class Document(BaseDocument):
 
 	def _validate(self):
 		self._validate_mandatory()
+		self._validate_data_fields()
 		self._validate_selects()
 		self._validate_length()
 		self._extract_images_from_text_editor()
@@ -469,6 +470,7 @@ class Document(BaseDocument):
 		children = self.get_all_children()
 		for d in children:
 			d._validate_selects()
+			d._validate_data_fields()
 			d._validate_length()
 			d._extract_images_from_text_editor()
 			d._sanitize_content()
@@ -686,7 +688,7 @@ class Document(BaseDocument):
 				self._action = "submit"
 				self.check_permission("submit")
 			else:
-				raise frappe.DocstatusTransitionError(_("Cannot change docstatus from 0 to 2"))
+				raise frappe.DocstatusTransitionError(_("Draft Document cannot be cancelled. Please {0} the selected document before cancelling it.").format(frappe.bold(_("Submit"))))
 
 		elif docstatus==1:
 			if self.docstatus==1:
@@ -696,10 +698,10 @@ class Document(BaseDocument):
 				self._action = "cancel"
 				self.check_permission("cancel")
 			else:
-				raise frappe.DocstatusTransitionError(_("Cannot change docstatus from 1 to 0"))
+				raise frappe.DocstatusTransitionError(_("Cannot change Document Status from Submitted to Draft."))
 
 		elif docstatus==2:
-			raise frappe.ValidationError(_("Cannot edit cancelled document"))
+			raise frappe.ValidationError(_("Cancelled Document cannot be edited."))
 
 	def set_parent_in_children(self):
 		"""Updates `parent` and `parenttype` property in all children."""
@@ -722,7 +724,6 @@ class Document(BaseDocument):
 			if d.is_new() and self.meta.get_field(d.parentfield).allow_on_submit:
 				# in case of a new row, don't validate allow on submit, if table is allow on submit
 				continue
-
 			d._validate_update_after_submit()
 
 		# TODO check only allowed values are updated
