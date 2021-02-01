@@ -13,6 +13,7 @@ def load_address_and_contact(doc, key=None):
 	from frappe.contacts.doctype.address.address import get_address_display, get_condensed_address
 
 	filters = [
+		["Address", "disabled", "=", 0],
 		["Dynamic Link", "link_doctype", "=", doc.doctype],
 		["Dynamic Link", "link_name", "=", doc.name],
 		["Dynamic Link", "parenttype", "=", "Address"],

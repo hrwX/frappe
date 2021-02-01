@@ -61,7 +61,7 @@ def has_permission(doctype, ptype="read", doc=None, verbose=False, user=None, ra
 		if isinstance(doc, string_types):
 			doc = frappe.get_doc(meta.name, doc)
 		perm = get_doc_permissions(doc, user=user, ptype=ptype).get(ptype)
-		if not perm: push_perm_check_log(_('User {0} does not have access to this document').format(frappe.bold(user)))
+		if not perm: push_perm_check_log(_('User {0} does not have access to document type {1}.').format(frappe.bold(user), frappe.bold(doctype)))
 	else:
 		if ptype=="submit" and not cint(meta.is_submittable):
 			push_perm_check_log(_("Document Type is not submittable"))
@@ -74,7 +74,7 @@ def has_permission(doctype, ptype="read", doc=None, verbose=False, user=None, ra
 		role_permissions = get_role_permissions(meta, user=user)
 		perm = role_permissions.get(ptype)
 		if not perm:
-			push_perm_check_log(_('User {0} does not have doctype access via role permission for document {1}').format(frappe.bold(user), frappe.bold(doctype)))
+			push_perm_check_log(_('User {0} does not have access to document type {1} via role permission.').format(frappe.bold(user), frappe.bold(doctype)))
 
 	def false_if_not_shared():
 		if ptype in ("read", "write", "share", "email", "print"):
